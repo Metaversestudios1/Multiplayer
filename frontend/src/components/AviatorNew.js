@@ -1,28 +1,32 @@
 import React, { useState, useEffect, useRef } from "react";
 import io from "socket.io-client";
 
-// const socket = io(`http://localhost:8000`);
-// const socket = io('https://aviatorgame-backend.vercel.app', {
-//   transports: ['websocket'], // Ensure you're using WebSocket for better connectivity
+//const socket = io(`http://localhost:8000`);
+// const socket = io("https://aviatorgame-backend.vercel.app", {
+//   transports: ["websocket"], // Ensure you're using WebSocket for better connectivity
 // });
 
+// const socket = io('https://aviatorgame-9ukw.onrender.com', {
+//   path: '/socket.io', // Ensure this matches the server setup
+//   transports: ['websocket','polling'], // Specify the transport method if necessary
+//   reconnection:true,
+//   reconnectionAttempts:5
+// });
 
-
-
-const socket = io('https://aviatorgame-9ukw.onrender.com', {
-  path: '/socket.io', // Ensure this matches the server setup
-  transports: ['websocket','polling'], // Specify the transport method if necessary
-  reconnection:true,
-  reconnectionAttempts:5
+// changed accoridng to backend
+const socket = io("https://aviatorgame-frontend.vercel.app", {
+  path: "/socket.io", // Ensure this matches the server setup
+  transports: ["websocket", "polling"], // Specify the transport method if necessary
+  reconnection: true,
+  reconnectionAttempts: 5,
 });
 
-
-socket.on('connect', () => {
-  console.log('Connected to server');
+socket.on("connect", () => {
+  console.log("Connected to server");
 });
 
-socket.on('connect_error', (err) => {
-  console.error('Connection error:', err);
+socket.on("connect_error", (err) => {
+  console.error("Connection error:", err);
 });
 
 function AviatorGame() {
@@ -42,88 +46,87 @@ function AviatorGame() {
 
   const gameRef = useRef(null);
 
-useEffect(() => {
-  socket.on("multiplier_reset", () => {
-    // Reset all states for the new round
-    setIsBetPlaced(false);
-    setBetAmount(0);
-    setLoadingComplete(false);
-    setIsPlaneVisible(false); // Hide the plane during loading
-    setMultiplier(0); // Reset multiplier to 0 to avoid showing old values
-    setIsCrashed(false); // Reset crashed state early
-    setMessage("");
-    setCrashPoint("");
+  useEffect(() => {
+    socket.on("multiplier_reset", () => {
+      // Reset all states for the new round
+      setIsBetPlaced(false);
+      setBetAmount(0);
+      setLoadingComplete(false);
+      setIsPlaneVisible(false); // Hide the plane during loading
+      setMultiplier(0); // Reset multiplier to 0 to avoid showing old values
+      setIsCrashed(false); // Reset crashed state early
+      setMessage("");
+      setCrashPoint("");
 
-    // Show the loader and delay the start of the new round
-    setShowLoader(true);
-    setTimeout(() => {
-      setLoadingComplete(true);
-      setShowLoader(false); // Hide loader after loading is complete
-      setIsPlaneVisible(false); // Keep the plane hidden until the multiplier starts
-      setWinnings(0);
-    }, 5000); 
-  });
+      // Show the loader and delay the start of the new round
+      setShowLoader(true);
+      setTimeout(() => {
+        setLoadingComplete(true);
+        setShowLoader(false); // Hide loader after loading is complete
+        setIsPlaneVisible(false); // Keep the plane hidden until the multiplier starts
+        setWinnings(0);
+      }, 5000);
+    });
 
-  socket.on("betting_open", () => {
-    setIsBettingOpen(true);
-  });
+    socket.on("betting_open", () => {
+      setIsBettingOpen(true);
+    });
 
-  socket.on("betting_close", () => {
-    setIsBettingOpen(false);
-  });
+    socket.on("betting_close", () => {
+      setIsBettingOpen(false);
+    });
 
-  socket.on("multiplier_update", (data) => {
-    setMultiplier(data.multiplier);
+    socket.on("multiplier_update", (data) => {
+      setMultiplier(data.multiplier);
 
-    // Ensure the plane becomes visible only when multiplier updates
-    if (!isCrashed && !isPlaneVisible) {
-      setIsPlaneVisible(true);
-      movePlaneDiagonally(); // Start moving the plane after multiplier is updated
-    }
-  });
+      // Ensure the plane becomes visible only when multiplier updates
+      if (!isCrashed && !isPlaneVisible) {
+        setIsPlaneVisible(true);
+        movePlaneDiagonally(); // Start moving the plane after multiplier is updated
+      }
+    });
 
-  socket.on("plane_crash", ({ crashPoint }) => {
-    setIsPlaneVisible(false); // Hide the plane immediately on crash
-    setIsCrashed(true); // Set crash state
-    setShowLoader(true); // Show loader during crash reset
-    setMessage(`Flew away`);
-    setCrashPoint(crashPoint);
-    resetPlanePosition(); // Reset plane position for next round
-  });
+    socket.on("plane_crash", ({ crashPoint }) => {
+      setIsPlaneVisible(false); // Hide the plane immediately on crash
+      setIsCrashed(true); // Set crash state
+      setShowLoader(true); // Show loader during crash reset
+      setMessage(`Flew away`);
+      setCrashPoint(crashPoint);
+      resetPlanePosition(); // Reset plane position for next round
+    });
 
-  socket.on("cash_out_success", (data) => {
-    setCashOutMultiplier(data.message);
-    setWinnings(data.winnings);
-  });
+    socket.on("cash_out_success", (data) => {
+      setCashOutMultiplier(data.message);
+      setWinnings(data.winnings);
+    });
 
-  return () => {
-    socket.off("multiplier_reset");
-    socket.off("betting_open");
-    socket.off("betting_close");
-    socket.off("multiplier_update");
-    socket.off("plane_crash");
-    socket.off("cash_out_success");
-  };
-}, [isPlaneVisible, isCrashed]);
-
+    return () => {
+      socket.off("multiplier_reset");
+      socket.off("betting_open");
+      socket.off("betting_close");
+      socket.off("multiplier_update");
+      socket.off("plane_crash");
+      socket.off("cash_out_success");
+    };
+  }, [isPlaneVisible, isCrashed]);
 
   const resetPlanePosition = () => {
-      setPlanePosition({ x: 0, y: 0 });
-      setShowLoader(false);
+    setPlanePosition({ x: 0, y: 0 });
+    setShowLoader(false);
   };
   const movePlaneDiagonally = () => {
     const gameWidth = gameRef.current.offsetWidth;
     const gameHeight = gameRef.current.offsetHeight;
-  
+
     let xPos = 0;
     let yPos = 0;
-  
+
     const animate = () => {
       xPos += gameWidth / 500; // Adjust for smoother, slower movement
       yPos += gameHeight / 500;
-  
+
       setPlanePosition({ x: xPos, y: yPos });
-  
+
       // Stop when it reaches the end of the screen
       if (xPos < gameWidth - 70 && yPos < gameHeight - 95) {
         requestAnimationFrame(animate); // Continue animating
@@ -131,29 +134,28 @@ useEffect(() => {
         oscillatePlane(xPos, yPos); // Start oscillating when plane reaches the end
       }
     };
-  
+
     requestAnimationFrame(animate); // Start the animation loop
   };
-  
+
   const oscillatePlane = (finalX, finalY) => {
     const oscillationAmplitude = 14; // Height of oscillation
     const oscillationFrequency = 0.05; // Speed of oscillation
     let oscillationPhase = 0;
-  
+
     const animateOscillation = () => {
       oscillationPhase += oscillationFrequency;
       const newY = finalY + oscillationAmplitude * Math.sin(oscillationPhase);
-  
+
       setPlanePosition({ x: finalX, y: newY }); // Update Y position for oscillation
-  
+
       if (!isCrashed) {
         requestAnimationFrame(animateOscillation); // Continue oscillating
       }
     };
-  
+
     requestAnimationFrame(animateOscillation); // Start the oscillation animation
   };
-  
 
   const handlePlaceBet = () => {
     if (betAmount > 0 && isBettingOpen) {
@@ -222,7 +224,7 @@ useEffect(() => {
               }}
             />
           )}
-          {(!isCrashed && !showLoader) ? (
+          {!isCrashed && !showLoader ? (
             <div className="absolute top-2/4 left-2/4 -translate-x-2/4 -translate-y-2/4 z-50 text-5xl font-extrabold">
               {multiplier}x
             </div>
@@ -230,8 +232,9 @@ useEffect(() => {
             <>
               <div className="absolute top-2/4 left-2/4 -translate-x-2/4 -translate-y-2/4 z-50 ">
                 <div className="text-3xl font-bold">{message}</div>
-                <div className="text-3xl text-[#de3232] font-bold">{crashPoint?crashPoint+"x":""}</div>
-
+                <div className="text-3xl text-[#de3232] font-bold">
+                  {crashPoint ? crashPoint + "x" : ""}
+                </div>
               </div>
             </>
           )}

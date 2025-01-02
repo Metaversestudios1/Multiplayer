@@ -59,7 +59,7 @@ const io = new SocketIoServer(server, {
   },
 });
 
-// app.use('/api', GameRoutes(io));
+//app.use("/api", GameRoutes(io));
 
 app.use(cors(corsOptions));
 app.use(express.json());
