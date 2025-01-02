@@ -239,85 +239,92 @@ const insertuser = async (req, res) => {
   }
 };
 
-const updateuser = async (req, res) => {
-  const updatedata = req.body;
-  const id = updatedata.id;
-  try {
-    const result = await User.updateOne(
-      { _id: id },
-      { $set: updatedata.oldData }
-    );
-    if (!result) {
-      res.status(404).json({ success: false, message: "user not found" });
-    }
-    res.status(201).json({ success: true, result: result });
-  } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: "error in updating the user",
-      error: err.message,
-    });
-  }
-};
 // const updateuser = async (req, res) => {
 //   const updatedata = req.body;
 //   const id = updatedata.id;
-
 //   try {
-//     // Fetch the current user data to get the previous coin value
-//     const user = await User.findById(id);
-//     if (!user) {
-//       return res
-//         .status(404)
-//         .json({ success: false, message: "User not found" });
-//     }
-//     console.log("User Old Data:", user);
-//     // Ensure the previous coins value is a number, default to 0 if it's non-existent or a string
-//     let previousCoins = user.coins;
-//     console.log("Previos coin value:", previousCoins);
-//     if (
-//       previousCoins === undefined ||
-//       previousCoins === "0" ||
-//       previousCoins === null
-//     ) {
-//       previousCoins = 0;
-//     } else {
-//       previousCoins = Number(previousCoins);
-//     }
-
-//     // If bonus is provided, add it to the previous coins value
-//     if (updatedata.bonus) {
-//       updatedata.coins = previousCoins + Number(updatedata.bonus); // Add new bonus to previous coins
-//     }
-
-//     // Update the user's data (including coins if necessary)
 //     const result = await User.updateOne(
 //       { _id: id },
-//       {
-//         $set: {
-//           ...updatedata.oldData, // Update any other fields from oldData
-//           coins: updatedata.coins, // Ensure the coins field is updated
-//         },
-//       }
+//       { $set: updatedata.oldData }
 //     );
-
-//     if (!result.modifiedCount) {
-//       return res
-//         .status(404)
-//         .json({ success: false, message: "Error updating user data" });
+//     if (!result) {
+//       res.status(404).json({ success: false, message: "user not found" });
 //     }
-
-//     console.log(result);
-
 //     res.status(201).json({ success: true, result: result });
 //   } catch (err) {
 //     res.status(500).json({
 //       success: false,
-//       message: "Error in updating the user",
+//       message: "error in updating the user",
 //       error: err.message,
 //     });
 //   }
 // };
+const updateuser = async (req, res) => {
+  const updatedata = req.body;
+  const id = updatedata.id;
+  //console.log("Old Data:", req.body.oldData);
+  //console.log("Req Data:", req.body);
+  try {
+    // Fetch the current user data to get the previous coin value
+    const user = await User.findById(id);
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    // Ensure the previous coins value is a number, default to 0 if it's non-existent or a string
+    let previousCoins = user.coins;
+
+    if (
+      previousCoins === undefined ||
+      previousCoins === "0" ||
+      previousCoins === null
+    ) {
+      previousCoins = 0;
+    } else {
+      previousCoins = Number(previousCoins);
+    }
+
+    // Default bonus to 0 if not provided
+    const bonus = updatedata.oldData.bonus
+      ? Number(updatedata.oldData.bonus)
+      : 0;
+
+    // Calculate the new coins value
+    updatedata.oldData.coins = previousCoins + bonus;
+
+    // Update the user's data (including coins if necessary)
+    const result = await User.updateOne(
+      { _id: id },
+      {
+        $set: {
+          ...updatedata.oldData, // Ensure other fields are updated as well
+          coins: updatedata.oldData.coins, // Ensure the coins field is updated
+        },
+      }
+    );
+
+    // Check if the update actually modified the document
+    if (result.modifiedCount === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No changes were made to the user data",
+      });
+    }
+
+    // Log the result to confirm update
+    //console.log("Update result:", result);
+
+    res.status(201).json({ success: true, result: result });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: "Error in updating the user",
+      error: err.message,
+    });
+  }
+};
 
 const userlogin = async (req, res) => {
   const { email, password, contact } = req.body;

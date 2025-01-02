@@ -96,6 +96,34 @@ const User = () => {
     }
   };
 
+  const handleStatusChange = async (userId, newStatus) => {
+    try {
+      const statusValue = newStatus === "active" ? 1 : 0; // Map string to database value
+
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/changeuserstatus/${userId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ status: statusValue }),
+        }
+      );
+
+      const data = await response.json();
+      if (response.ok) {
+        toast.success("Status updated successfully!");
+        fetchData();
+      } else {
+        //alert("Error updating status: " + data.message);
+        toast.error("Failed to update status. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error updating status:", error);
+    }
+  };
+
   // const handledeletephoto = async (e, id) => {
   //   e.preventDefault();
   //   const permissionOfDelete = window.confirm(
@@ -224,7 +252,9 @@ const User = () => {
                 <th scope="col" className="px-6 py-3 border-2 border-gray-300">
                   Email
                 </th>
-
+                <th scope="col" className="px-6 py-3 border-2 border-gray-300">
+                  Status
+                </th>
                 <th scope="col" className="px-6 py-3 border-2 border-gray-300">
                   Created At
                 </th>
@@ -275,6 +305,18 @@ const User = () => {
                     {item?.email}
                   </td>
 
+                  <td className="px-6 py-4 border-2 border-gray-300">
+                    <select
+                      className="border border-gray-300 rounded px-2 py-1"
+                      value={item?.status === 1 ? "active" : "inactive"} // Map status to string value
+                      onChange={(e) =>
+                        handleStatusChange(item._id, e.target.value)
+                      } // Handle change event
+                    >
+                      <option value="active">Active</option>
+                      <option value="inactive">Inactive</option>
+                    </select>
+                  </td>
                   <td className="px-6 py-4 border-2 border-gray-300">
                     {item?.createdAt?.split("T")[0]}
                   </td>
