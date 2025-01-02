@@ -537,6 +537,83 @@ const resetPassword = async (req, res) => {
     });
   }
 };
+
+const getSumOfWallet = async (req, res) => {
+  try {
+    // Aggregate to sum the balance of all users where deleted_at is null
+    const result = await User.aggregate([
+      { $match: { deleted_at: null } }, // Filter out users with non-null deleted_at
+      { $group: { _id: null, totalBalance: { $sum: "$balance" } } }, // Sum up the balance field
+    ]);
+
+    // Extract the totalBalance or default to 0 if no matching users
+    const totalBalance = result.length > 0 ? result[0].totalBalance : 0;
+    //console.log("total balance:", totalBalance);
+    res.status(200).json({
+      success: true,
+      totalBalance: totalBalance,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "Server error. Please try again later.",
+      error: error.message,
+    });
+  }
+};
+
+const getSumOfBonus = async (req, res) => {
+  try {
+    // Aggregate to sum the bonus of all users where deleted_at is null
+    const result = await User.aggregate([
+      { $match: { deleted_at: null } }, // Filter out users with non-null deleted_at
+      { $group: { _id: null, totalBonus: { $sum: "$bonus" } } }, // Sum up the bonous field
+    ]);
+
+    // Extract the totalBonus or default to 0 if no matching users
+    const totalBonus = result.length > 0 ? result[0].totalBonus : 0;
+    //console.log("total bonus:", totalBonus);
+    res.status(200).json({
+      success: true,
+      totalBonus: totalBonus,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "Server error. Please try again later.",
+      error: error.message,
+    });
+  }
+};
+
+const changeUserStatus = async (req, res) => {
+  const { userId } = req.params;
+  const { status } = req.body;
+  try {
+    const result = await User.updateOne({ _id: userId }, { $set: { status } });
+
+    if (result.modifiedCount === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found or status unchanged",
+      });
+    }
+
+    res
+      .status(200)
+      .json({ success: true, message: "Status updated successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "Server error. Please try again later.",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   insertuser,
   updateuser,
@@ -550,4 +627,7 @@ module.exports = {
   resetPassword,
   sendmailsms,
   verifyotpreg,
+  getSumOfWallet,
+  getSumOfBonus,
+  changeUserStatus,
 };

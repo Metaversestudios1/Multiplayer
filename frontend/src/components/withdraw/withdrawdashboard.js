@@ -10,6 +10,8 @@ const Withdrawdashboard = () => {
   const [totalWithdraws, setTotalWithdraws] = useState(0);
   const [totalPendingWithdraws, setTotalPendingWithdraws] = useState(0);
   const [kycRequests, setKycRequests] = useState(0);
+  const [sumofWallet, setSumOffWallet] = useState(0);
+  const [sumofBonus, setSumOfBonus] = useState(0);
 
   useEffect(() => {
     setLoader(true);
@@ -21,6 +23,8 @@ const Withdrawdashboard = () => {
       fetchPendingWithdrawsCount(),
       fetchPendingRechargesCount(),
       fetchKycRequests(),
+      fetchWallet(),
+      fetchBonus(),
     ]).finally(() => {
       setLoader(false);
     });
@@ -90,6 +94,24 @@ const Withdrawdashboard = () => {
 
     //console.log("Pending requests count:", pendingRequests.length);
     setKycRequests(pendingRequests.length);
+  };
+
+  const fetchWallet = async () => {
+    const res = await fetch(
+      `${process.env.REACT_APP_BACKEND_URL}/api/getsumofwallet`
+    );
+    const response = await res.json();
+    //console.log("sum of wallet:", response.totalBalance);
+    setSumOffWallet(response.totalBalance);
+  };
+
+  const fetchBonus = async () => {
+    const res = await fetch(
+      `${process.env.REACT_APP_BACKEND_URL}/api/getsumofbonus`
+    );
+    const response = await res.json();
+    //console.log("sum of bonus:", response.totalBonus);
+    setSumOfBonus(response.totalBonus);
   };
   return (
     <div>
@@ -229,10 +251,10 @@ const Withdrawdashboard = () => {
                     </div>
                     <div className="ml-3">
                       <span className="text-2xl font-bold text-gray-900">
-                        {totalWithdraws}
+                        {sumofWallet}
                       </span>
                       <h3 className="text-base font-normal text-gray-500">
-                        Total Withdrawals
+                        Sum of Wallet
                       </h3>
                     </div>
                   </div>
@@ -240,7 +262,7 @@ const Withdrawdashboard = () => {
               </div>
 
               {/* Card for Pending Withdrawals */}
-              <div className="bg-white shadow-lg rounded-2xl p-4">
+              {/* <div className="bg-white shadow-lg rounded-2xl p-4">
                 <NavLink to="/request">
                   <div className="flex items-center">
                     <div className="inline-flex justify-center items-center w-12 h-12 text-white bg-[#1E88E5] rounded-lg">
@@ -267,10 +289,10 @@ const Withdrawdashboard = () => {
                     </div>
                   </div>
                 </NavLink>
-              </div>
+              </div> */}
 
               {/* Card for Pending KYC Requests */}
-              <div className="bg-white shadow-lg rounded-2xl p-4">
+              {/* <div className="bg-white shadow-lg rounded-2xl p-4">
                 <NavLink to="/request">
                   <div className="flex items-center">
                     <div className="inline-flex justify-center items-center w-12 h-12 text-white bg-[#1E88E5] rounded-lg">
@@ -297,7 +319,7 @@ const Withdrawdashboard = () => {
                     </div>
                   </div>
                 </NavLink>
-              </div>
+              </div> */}
 
               {/* Additional cards can be added here */}
             </div>
@@ -423,10 +445,10 @@ const Withdrawdashboard = () => {
                     </div>
                     <div className="ml-3">
                       <span className="text-2xl font-bold text-gray-900">
-                        {totalWithdraws}
+                        {sumofBonus}
                       </span>
                       <h3 className="text-base font-normal text-gray-500">
-                        Total Withdrawals
+                        Total Bonus
                       </h3>
                     </div>
                   </div>
@@ -434,7 +456,7 @@ const Withdrawdashboard = () => {
               </div>
 
               {/* Card for Pending Withdrawals */}
-              <div className="bg-white shadow-lg rounded-2xl p-4">
+              {/* <div className="bg-white shadow-lg rounded-2xl p-4">
                 <NavLink to="/request">
                   <div className="flex items-center">
                     <div className="inline-flex justify-center items-center w-12 h-12 text-white bg-[#1E88E5] rounded-lg">
@@ -461,10 +483,10 @@ const Withdrawdashboard = () => {
                     </div>
                   </div>
                 </NavLink>
-              </div>
+              </div> */}
 
               {/* Card for Pending KYC Requests */}
-              <div className="bg-white shadow-lg rounded-2xl p-4">
+              {/* <div className="bg-white shadow-lg rounded-2xl p-4">
                 <NavLink to="/request">
                   <div className="flex items-center">
                     <div className="inline-flex justify-center items-center w-12 h-12 text-white bg-[#1E88E5] rounded-lg">
@@ -491,7 +513,7 @@ const Withdrawdashboard = () => {
                     </div>
                   </div>
                 </NavLink>
-              </div>
+              </div> */}
 
               {/* Additional cards can be added here */}
             </div>

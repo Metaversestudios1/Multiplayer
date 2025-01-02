@@ -283,7 +283,7 @@ const EditUser = () => {
               />
             </div>
 
-            {/* <div className="my-2">
+            <div className="my-2">
               <label
                 htmlFor="balance"
                 className="block mb-2 text-lg font-medium text-gray-900 dark:text-black"
@@ -303,7 +303,7 @@ const EditUser = () => {
                 <option value="30">30</option>
                 <option value="40">40</option>
               </select>
-            </div> */}
+            </div>
 
             {error && <p className="text-red-900  text-[17px] mb-5">{error}</p>}
             <button

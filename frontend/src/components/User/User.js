@@ -206,7 +206,12 @@ const User = () => {
                 <th scope="col" className="px-6 py-3 border-2 border-gray-300">
                   Otp Verifyed
                 </th>
-
+                <th scope="col" className="px-6 py-3 border-2 border-gray-300">
+                  Balance
+                </th>
+                <th scope="col" className="px-6 py-3 border-2 border-gray-300">
+                  Coins
+                </th>
                 <th scope="col" className="px-6 py-3 border-2 border-gray-300">
                   Bonus
                 </th>
@@ -252,6 +257,12 @@ const User = () => {
                   </td>
                   <td className="px-6 py-4 border-2 border-gray-300">
                     {item?.balance}
+                  </td>
+                  <td className="px-6 py-4 border-2 border-gray-300">
+                    {item?.coins}
+                  </td>
+                  <td className="px-6 py-4 border-2 border-gray-300">
+                    {item?.bonus}
                   </td>
 
                   <td className="px-6 py-4 border-2 border-gray-300">
