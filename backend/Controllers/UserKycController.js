@@ -1,5 +1,6 @@
 const UserBank = require("../Models/UserBankDetails");
 const bcrypt = require("bcrypt");
+
 const insertUserBank = async (req, res) => {
   try {
     const newUserBank = new UserBank(req.body);
@@ -141,6 +142,7 @@ const updatekycstatus = async (req, res) => {
     });
   }
 };
+
 module.exports = {
   insertUserBank,
   updateUserBank,

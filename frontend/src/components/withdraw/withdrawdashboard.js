@@ -12,6 +12,8 @@ const Withdrawdashboard = () => {
   const [kycRequests, setKycRequests] = useState(0);
   const [sumofWallet, setSumOffWallet] = useState(0);
   const [sumofBonus, setSumOfBonus] = useState(0);
+  const [totalApprovedWithdraws, setTotalApprovedWithdraws] = useState(0);
+  const [totalApprovedRecharges, setTotalApprovedRechargess] = useState(0);
 
   useEffect(() => {
     setLoader(true);
@@ -25,6 +27,8 @@ const Withdrawdashboard = () => {
       fetchKycRequests(),
       fetchWallet(),
       fetchBonus(),
+      fetchApprovedWithdrawsCount(),
+      fetchApprovedRechargeCount(),
     ]).finally(() => {
       setLoader(false);
     });
@@ -112,6 +116,24 @@ const Withdrawdashboard = () => {
     const response = await res.json();
     //console.log("sum of bonus:", response.totalBonus);
     setSumOfBonus(response.totalBonus);
+  };
+
+  const fetchApprovedWithdrawsCount = async () => {
+    const res = await fetch(
+      `${process.env.REACT_APP_BACKEND_URL}/api/getapprovedwithdraw`
+    );
+    const response = await res.json();
+    //console.log("fetchApprovedWithdrawsCount:", response.count);
+    setTotalApprovedWithdraws(response.count);
+  };
+
+  const fetchApprovedRechargeCount = async () => {
+    const res = await fetch(
+      `${process.env.REACT_APP_BACKEND_URL}/api/getapprovedrecharge`
+    );
+    const response = await res.json();
+    //console.log("fetchApprovedRechargeCount:", response.count);
+    setTotalApprovedRechargess(response.count);
   };
   return (
     <div>
@@ -213,10 +235,10 @@ const Withdrawdashboard = () => {
                     </div>
                     <div className="ml-3">
                       <span className="text-2xl font-bold text-gray-900">
-                        {kycRequests}
+                        {totalApprovedWithdraws}
                       </span>
                       <h3 className="text-base font-normal text-gray-500">
-                        Pending KYC Requests
+                        Approved Withdrawals
                       </h3>
                     </div>
                   </div>
@@ -349,10 +371,10 @@ const Withdrawdashboard = () => {
                     </div>
                     <div className="ml-3">
                       <span className="text-2xl font-bold text-gray-900">
-                        {totalWithdraws}
+                        {totalRecharges}
                       </span>
                       <h3 className="text-base font-normal text-gray-500">
-                        Total Withdrawals
+                        Total Recharges
                       </h3>
                     </div>
                   </div>
@@ -379,10 +401,10 @@ const Withdrawdashboard = () => {
                     </div>
                     <div className="ml-3">
                       <span className="text-2xl font-bold text-gray-900">
-                        {totalPendingWithdraws}
+                        {totalPendingRecharges}
                       </span>
                       <h3 className="text-base font-normal text-gray-500">
-                        Pending Withdrawals
+                        Pending Recharges
                       </h3>
                     </div>
                   </div>
@@ -409,10 +431,10 @@ const Withdrawdashboard = () => {
                     </div>
                     <div className="ml-3">
                       <span className="text-2xl font-bold text-gray-900">
-                        {kycRequests}
+                        {totalApprovedRecharges}
                       </span>
                       <h3 className="text-base font-normal text-gray-500">
-                        Pending KYC Requests
+                        Approved Recharges
                       </h3>
                     </div>
                   </div>

@@ -8,6 +8,7 @@ import { ImCross } from "react-icons/im";
 import { IoMdEye } from "react-icons/io";
 import { IoWallet } from "react-icons/io5";
 import { IoRemoveCircle } from "react-icons/io5";
+import Papa from "papaparse";
 const User = () => {
   const [users, setUsers] = useState([]);
   const [noData, setNoData] = useState(false);
@@ -126,6 +127,30 @@ const User = () => {
     }
   };
 
+  const exportToCSV = () => {
+    const csvData = users.map((user, index) => ({
+      SrNo: index + 1,
+      Name: user.username,
+      UserId: user.user_id,
+      IsVerified: user.isVerified ? "True" : "False",
+      Balance: user.balance,
+      Coins: user.coins,
+      Bonus: user.bonus,
+      LastRecharge: user.last_recharge,
+      Contact: user.contact,
+      Email: user.email,
+      Status: user.status === 1 ? "Active" : "Inactive",
+      CreatedAt: user.createdAt?.split("T")[0],
+    }));
+
+    const csv = Papa.unparse(csvData);
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "users_data.csv";
+    link.click();
+  };
+
   // const handledeletephoto = async (e, id) => {
   //   e.preventDefault();
   //   const permissionOfDelete = window.confirm(
@@ -183,7 +208,16 @@ const User = () => {
 
       <div className="flex items-center">
         <div className="text-2xl font-bold mx-2 my-8 px-4">User List</div>
+        <div>
+          <button
+            onClick={exportToCSV}
+            className="bg-green-500 text-white p-3 rounded-lg"
+          >
+            Export to CSV
+          </button>
+        </div>
       </div>
+
       <div className="flex justify-between">
         <NavLink to="/usersendmailsms">
           <button className="bg-blue-800 text-white p-3 m-5 text-sm rounded-lg">
