@@ -33,6 +33,8 @@ import SendMailSms from "./components/User/UserSendMailSMS";
 import UserVerifyMailSMS from "./components/User/UserVerifyMailSMS";
 import Banner from "./components/setting/banner/Banner";
 import AddBanner from "./components/setting/banner/AddBanner";
+import AddWallet from "./components/User/AddWallet";
+import RemoveWallet from "./components/User/RemoveWallet";
 
 function App() {
   const [sideBar, setSideBar] = useState(true);
@@ -346,6 +348,38 @@ function App() {
           <div className="flex flex-col flex-grow overflow-y-auto flex-[3]">
             <Navbar toggleSideBar={toggleSideBar} />
             <EditUser />
+          </div>
+        </div>
+      ),
+    },
+    {
+      path: "/addwalletuser/:id",
+      element: (
+        <div className="flex h-screen">
+          <Sidebar
+            sidebar={sideBar}
+            className="flex-1"
+            toggleSideBar={toggleSideBar}
+          />
+          <div className="flex flex-col flex-grow overflow-y-auto flex-[3]">
+            <Navbar toggleSideBar={toggleSideBar} />
+            <AddWallet />
+          </div>
+        </div>
+      ),
+    },
+    {
+      path: "/removewalletuser/:id",
+      element: (
+        <div className="flex h-screen">
+          <Sidebar
+            sidebar={sideBar}
+            className="flex-1"
+            toggleSideBar={toggleSideBar}
+          />
+          <div className="flex flex-col flex-grow overflow-y-auto flex-[3]">
+            <Navbar toggleSideBar={toggleSideBar} />
+            <RemoveWallet />
           </div>
         </div>
       ),

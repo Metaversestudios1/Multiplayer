@@ -6,6 +6,8 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ImCross } from "react-icons/im";
 import { IoMdEye } from "react-icons/io";
+import { IoWallet } from "react-icons/io5";
+import { IoRemoveCircle } from "react-icons/io5";
 const User = () => {
   const [users, setUsers] = useState([]);
   const [noData, setNoData] = useState(false);
@@ -324,6 +326,12 @@ const User = () => {
                     <div className="flex items-center">
                       <NavLink to={`/edituser/${item?._id}`}>
                         <IoMdEye className="text-2xl cursor-pointer text-blue-900" />
+                      </NavLink>
+                      <NavLink to={`/addwalletuser/${item?._id}`}>
+                        <IoWallet className="text-2xl cursor-pointer text-green-600" />
+                      </NavLink>
+                      <NavLink to={`/removewalletuser/${item?._id}`}>
+                        <IoRemoveCircle className="text-2xl cursor-pointer text-red-600" />
                       </NavLink>
                       <MdDelete
                         onClick={(e) => handleDelete(e, item?._id)}

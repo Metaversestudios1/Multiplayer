@@ -14,6 +14,8 @@ const {
   getSumOfWallet,
   getSumOfBonus,
   changeUserStatus,
+  addWalletUser,
+  removeWalletUser,
 } = require("../Controllers/UserController");
 const express = require("express");
 const router = express.Router();
@@ -33,5 +35,7 @@ router.post("/verifyotpreg", verifyotpreg);
 router.get("/getsumofwallet", getSumOfWallet);
 router.get("/getsumofbonus", getSumOfBonus);
 router.put("/changeuserstatus/:userId", changeUserStatus);
+router.put("/addwalletuser", addWalletUser);
+router.put("/removewalletuser", removeWalletUser);
 
 module.exports = router;

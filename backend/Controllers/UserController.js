@@ -621,6 +621,141 @@ const changeUserStatus = async (req, res) => {
   }
 };
 
+const addWalletUser = async (req, res) => {
+  const updatedata = req.body;
+  const id = updatedata.id;
+
+  try {
+    // Fetch the current user data to get the previous balance value
+    const user = await User.findById(id);
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    // Ensure the previous balance value is a number, default to 0 if it's non-existent or a string
+    let previousBalance = user.balance;
+
+    if (
+      previousBalance === undefined ||
+      previousBalance === "0" ||
+      previousBalance === null
+    ) {
+      previousBalance = 0;
+    } else {
+      previousBalance = Number(previousBalance);
+    }
+
+    // Default amount to 0 if not provided
+    const amount = updatedata.oldData.amount
+      ? Number(updatedata.oldData.amount)
+      : 0;
+
+    // Calculate the new balance value
+    const newBalance = previousBalance + amount;
+
+    // Update the user's balance (no need to update coins)
+    const result = await User.updateOne(
+      { _id: id },
+      {
+        $set: {
+          balance: newBalance, // Only update the balance field
+        },
+      }
+    );
+
+    // Check if the update actually modified the document
+    if (result.modifiedCount === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No changes were made to the user data",
+      });
+    }
+
+    console.log("Update result:", result);
+    res.status(201).json({ success: true, result: result });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: "Error in updating the user",
+      error: err.message,
+    });
+  }
+};
+
+const removeWalletUser = async (req, res) => {
+  const updatedata = req.body;
+  const id = updatedata.id;
+
+  try {
+    // Fetch the user data by id
+    const user = await User.findById(id);
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    // Get the current balance, ensuring it's a number
+    let previousBalance = user.balance;
+    if (
+      previousBalance === undefined ||
+      previousBalance === "0" ||
+      previousBalance === null
+    ) {
+      previousBalance = 0;
+    } else {
+      previousBalance = Number(previousBalance);
+    }
+
+    console.log("previos balance:", previousBalance);
+
+    // Get the amount to be subtracted (ensure it's a number)
+    const amount = updatedata.oldData.amount
+      ? Number(updatedata.oldData.amount)
+      : 0;
+
+    // Calculate the new balance after subtraction
+    const newBalance = previousBalance - amount;
+
+    // Ensure the new balance is valid (i.e., it shouldn't go negative if that's not allowed)
+    if (newBalance < 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Insufficient balance to remove the specified amount",
+      });
+    }
+
+    // Perform the update on the user's balance field only
+    const result = await User.updateOne(
+      { _id: id },
+      {
+        $set: {
+          balance: newBalance, // Only update the balance field
+        },
+      }
+    );
+
+    // If no changes were made, return an error
+    if (result.modifiedCount === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No changes were made to the user data",
+      });
+    }
+
+    // Respond with the success result
+    res.status(201).json({ success: true, result: result });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: "Error in updating the user",
+      error: err.message,
+    });
+  }
+};
+
 module.exports = {
   insertuser,
   updateuser,
@@ -637,4 +772,6 @@ module.exports = {
   getSumOfWallet,
   getSumOfBonus,
   changeUserStatus,
+  addWalletUser,
+  removeWalletUser,
 };
