@@ -327,6 +327,9 @@ const User = () => {
                       <NavLink to={`/edituser/${item?._id}`}>
                         <IoMdEye className="text-2xl cursor-pointer text-blue-900" />
                       </NavLink>
+                      <NavLink to={`/ledger/${item?._id}`} className="ml-2">
+                        <IoWallet className="text-2xl cursor-pointer text-yellow-600" />
+                      </NavLink>
                       <NavLink to={`/addwalletuser/${item?._id}`}>
                         <IoWallet className="text-2xl cursor-pointer text-green-600" />
                       </NavLink>

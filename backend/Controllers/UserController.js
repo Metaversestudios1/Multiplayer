@@ -5,6 +5,7 @@ const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
 const twilio = require("twilio");
 const Promocode = require("../Models/User");
+const Ledger = require("../Models/Ledger");
 
 const sendmailsms = async (req, res) => {
   const { email, contact } = req.body;
@@ -673,7 +674,18 @@ const addWalletUser = async (req, res) => {
       });
     }
 
-    console.log("Update result:", result);
+    //console.log("Update result:", result);
+
+    // Create the ledger entry for the transaction
+    const ledgerEntry = new Ledger({
+      source: "admin add", // or "admin deduct"
+      user_id: id,
+      balance: newBalance,
+      amount: amount,
+    });
+
+    await ledgerEntry.save();
+
     res.status(201).json({ success: true, result: result });
   } catch (err) {
     res.status(500).json({
@@ -744,6 +756,17 @@ const removeWalletUser = async (req, res) => {
         message: "No changes were made to the user data",
       });
     }
+
+    // Create the ledger entry for the transaction
+    const ledgerEntry = new Ledger({
+      source: "admin deduct", // or other sources
+      user_id: id,
+      balance: newBalance,
+      amount: amount,
+    });
+
+    // Save the ledger entry
+    await ledgerEntry.save();
 
     // Respond with the success result
     res.status(201).json({ success: true, result: result });

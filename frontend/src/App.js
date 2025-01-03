@@ -35,6 +35,7 @@ import Banner from "./components/setting/banner/Banner";
 import AddBanner from "./components/setting/banner/AddBanner";
 import AddWallet from "./components/User/AddWallet";
 import RemoveWallet from "./components/User/RemoveWallet";
+import Ledger from "./components/User/Ledger";
 
 function App() {
   const [sideBar, setSideBar] = useState(true);
@@ -380,6 +381,22 @@ function App() {
           <div className="flex flex-col flex-grow overflow-y-auto flex-[3]">
             <Navbar toggleSideBar={toggleSideBar} />
             <RemoveWallet />
+          </div>
+        </div>
+      ),
+    },
+    {
+      path: "/ledger/:id",
+      element: (
+        <div className="flex h-screen">
+          <Sidebar
+            sidebar={sideBar}
+            className="flex-1"
+            toggleSideBar={toggleSideBar}
+          />
+          <div className="flex flex-col flex-grow overflow-y-auto flex-[3]">
+            <Navbar toggleSideBar={toggleSideBar} />
+            <Ledger />
           </div>
         </div>
       ),
