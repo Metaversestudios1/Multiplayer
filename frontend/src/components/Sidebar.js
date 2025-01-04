@@ -473,6 +473,18 @@ const Sidebar = ({ sidebar, toggleSideBar }) => {
                         App Banner
                       </NavLink>
                     </div>
+                    <div className="hs-accordion" id="users-accordion-sub-1">
+                      <NavLink
+                        to="/notification"
+                        className={({ isActive }) =>
+                          isActive
+                            ? "flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white bg-[#0472ff] rounded-lg ml-10 "
+                            : "flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-lg ml-10  hover:text-black hover:bg-white"
+                        }
+                      >
+                        Notification
+                      </NavLink>
+                    </div>
                   </li>
                 </ul>
               )}

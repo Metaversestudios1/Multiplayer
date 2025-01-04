@@ -36,6 +36,8 @@ import AddBanner from "./components/setting/banner/AddBanner";
 import AddWallet from "./components/User/AddWallet";
 import RemoveWallet from "./components/User/RemoveWallet";
 import Ledger from "./components/User/Ledger";
+import Notification from "./components/setting/notification/Notification";
+import AddNotification from "./components/setting/notification/AddNotification";
 
 function App() {
   const [sideBar, setSideBar] = useState(true);
@@ -559,6 +561,43 @@ function App() {
             <div className="flex flex-col flex-grow overflow-y-auto flex-[3]">
               <Navbar toggleSideBar={toggleSideBar} />
               <AddBanner />
+            </div>
+          </div>
+        </PrivateRoute>
+      ),
+    },
+    {
+      path: "/notification",
+      element: (
+        <PrivateRoute>
+          <div className="flex h-screen">
+            <Sidebar
+              sidebar={sideBar}
+              className="flex-1"
+              toggleSideBar={toggleSideBar}
+            />
+            <div className="flex flex-col flex-grow overflow-y-auto flex-[3]">
+              <Navbar toggleSideBar={toggleSideBar} />
+              <Notification />
+            </div>
+          </div>
+        </PrivateRoute>
+      ),
+    },
+
+    {
+      path: "/addnotification",
+      element: (
+        <PrivateRoute>
+          <div className="flex h-screen">
+            <Sidebar
+              sidebar={sideBar}
+              className="flex-1"
+              toggleSideBar={toggleSideBar}
+            />
+            <div className="flex flex-col flex-grow overflow-y-auto flex-[3]">
+              <Navbar toggleSideBar={toggleSideBar} />
+              <AddNotification />
             </div>
           </div>
         </PrivateRoute>

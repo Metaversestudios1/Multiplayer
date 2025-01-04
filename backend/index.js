@@ -25,6 +25,7 @@ const AviatorHistoryRoutes = require("./Routes/Aviator/AviatorHistoryRoutes");
 const LeadBoard = require("./Routes/LeadBoardRoutes");
 const Banner = require("./Routes/BannerRoutes");
 const Ledger = require("./Routes/LedgerRoute");
+const Notification = require("./Routes/NotificationRoute");
 
 // Connect to the database
 connectDB();
@@ -83,6 +84,7 @@ app.use("/api", AviatorHistoryRoutes);
 app.use("/api", LeadBoard);
 app.use("/api", Banner);
 app.use("/api", Ledger);
+app.use("/api", Notification);
 
 // Root route
 app.get("/", (req, res) => {
