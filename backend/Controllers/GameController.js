@@ -8,7 +8,8 @@ const Bet = require("../Models/Bet");
 const GameHistory = require("../Models/Aviator/AviatorHistory");
 
 const gameLogic = async (io) => {
-  let users = {}; // Store user data and their bets
+  let users = {}; // Store user data by userId
+  let socketToUserId = {}; // Map socket.id to userId
   let multiplier = 0; // Starting multiplier
   let crashPoint = 0; // Where the plane crashes
   let crashRanges = []; // Array to store crash ranges from DB
@@ -16,35 +17,18 @@ const gameLogic = async (io) => {
   // Function to fetch crash ranges from the database
   const fetchCrashRanges = async () => {
     try {
-      const ranges = await PlaneCrash.find({ deleted_at: null }).exec(); // Fetch active crash ranges
+      const ranges = await PlaneCrash.find({ deleted_at: null }).exec();
       crashRanges = ranges.map((range) => ({
         range: [parseFloat(range.firstValue), parseFloat(range.secondValue)],
-        probability: parseFloat(range.crashPercentage) / 100, // Convert percentage to a probability
+        probability: parseFloat(range.crashPercentage) / 100,
       }));
     } catch (error) {
       console.error("Error fetching crash ranges from database:", error);
     }
   };
 
-  // Function to select a crash range based on weighted probabilities
-  const selectCrashRange = () => {
-    const random = Math.random(); // Random number between 0 and 1
-    let cumulativeProbability = 0;
-
-    for (let i = 0; i < crashRanges.length; i++) {
-      cumulativeProbability += crashRanges[i].probability;
-      if (random <= cumulativeProbability) {
-        return crashRanges[i].range;
-      }
-    }
-
-    // Default to the last range if something goes wrong
-    return crashRanges[crashRanges.length - 1].range;
-  };
-
   const saveBet = async (userId, betAmount) => {
     users[userId] = { betAmount, hasCashedOut: false };
-    console.log(`User ${userId} placed a bet of $${betAmount}`);
     try {
       const newBet = new Bet({
         userId: userId,
@@ -53,7 +37,7 @@ const gameLogic = async (io) => {
       await newBet.save();
       console.log("Game bet saved successfully");
     } catch (error) {
-      console.error("Error saving  game bet:", error);
+      console.error("Error saving game bet:", error);
     }
   };
 
@@ -62,15 +46,22 @@ const gameLogic = async (io) => {
     let totalWinningAmount = 0;
     let userResults = [];
 
-    for (let userId in users) {
+    console.log("users:", users);
+
+    for (const userId in users) {
       const user = users[userId];
       if (user.betAmount > 0) {
         totalBet += user.betAmount;
 
-        let winnings = user.hasCashedOut ? user.betAmount * multiplier : 0;
+        const winnings = user.hasCashedOut ? user.betAmount * multiplier : 0;
         totalWinningAmount += winnings;
 
-        userResults.push({ userId, betAmount: user.betAmount, winnings });
+        userResults.push({
+          userId,
+          betAmount: user.betAmount,
+          winnings: winnings.toFixed(2),
+          hasCashedOut: user.hasCashedOut,
+        });
       }
     }
 
@@ -78,24 +69,29 @@ const gameLogic = async (io) => {
     return { totalBet, totalWinningAmount, adminProfit, userResults };
   };
 
-  // const saveGameHistory = async (gameResults) => {
-  //   try {
-  //     const newHistory = new GameHistory({
-  //       users: gameResults.userResults,
-  //       totalBet: gameResults.totalBet,
-  //       adminProfit: gameResults.adminProfit,
-  //       totalWinningAmount: gameResults.totalWinningAmount,
-  //     });
-  //     await newHistory.save();
-  //     console.log("Game history saved successfully");
-  //   } catch (error) {
-  //     console.error("Error saving game history:", error);
-  //   }
-  // };
+  const saveGameHistory = async (gameResults) => {
+    if (gameResults.totalBet === 0) {
+      console.log("No bets placed, skipping game history save.");
+      return; // Skip saving if no bets were placed
+    }
+
+    try {
+      const newHistory = new GameHistory({
+        users: gameResults.userResults,
+        totalBet: gameResults.totalBet,
+        adminProfit: gameResults.adminProfit,
+        totalWinningAmount: gameResults.totalWinningAmount,
+        crashPoint: crashPoint.toFixed(2),
+      });
+      await newHistory.save();
+      console.log("Game history saved successfully");
+    } catch (error) {
+      console.error("Error saving game history:", error);
+    }
+  };
 
   const startGame = async () => {
     console.log("Game started");
-
     await fetchCrashRanges();
 
     if (crashRanges.length === 0) {
@@ -103,97 +99,98 @@ const gameLogic = async (io) => {
       return;
     }
 
-    // Select crash range based on probability and generate crash point within that range
-    const crashRange = selectCrashRange();
-    // crashPoint = Math.random() * (crashRange[1] - crashRange[0]) + crashRange[0];
-
-    // Generate random crash point (e.g., between 1.5x to 4x)
     crashPoint = Math.random() * (4 - 1) + 1;
     console.log(`Crash point set at: ${crashPoint.toFixed(2)}x`);
 
-    multiplier = 1; // Reset multiplier
-    io.emit("multiplier_reset", { multiplier: 0 }); // Notify frontend to reset and show bet input
-
-    io.emit("betting_open", { isBettingOpen: true }); // Open betting window for 5 seconds
-    console.log("Betting is now open.");
+    multiplier = 1;
+    io.emit("multiplier_reset", { multiplier: 0 });
+    io.emit("betting_open", { isBettingOpen: true });
 
     setTimeout(() => {
-      // Close betting and start increasing multiplier
       io.emit("betting_close", { isBettingOpen: false });
       console.log("Betting closed. Game is starting.");
 
       let gameInterval = setInterval(() => {
-        multiplier += 0.01; // Increment multiplier
-        console.log(multiplier);
+        multiplier += 0.01;
         io.emit("multiplier_update", { multiplier: multiplier.toFixed(2) });
 
-        // If multiplier exceeds crash point, the plane crashes
         if (multiplier >= crashPoint) {
           clearInterval(gameInterval);
           io.emit("plane_crash", { crashPoint: crashPoint.toFixed(2) });
 
           const gameResults = calculateGameResults();
           console.log("Game Result:", gameResults);
-          //saveGameHistory(gameResults);
-          for (const socketId in users) {
-            if (
-              !users[socketId].hasCashedOut &&
-              users[socketId].betAmount > 0
-            ) {
-              io.to(socketId).emit("bet_lost", {
-                message: `You lost $${
-                  users[socketId].betAmount
-                } as the plane crashed at ${crashPoint.toFixed(2)}x.`,
-                crashPoint: crashPoint.toFixed(2),
-              });
-              console.log(
-                `User ${socketId} lost $${users[socketId].betAmount}`
-              );
+          saveGameHistory(gameResults);
+
+          // Clear user data to prevent carrying over to the next game
+          users = {};
+          console.log("User data cleared for the next game.");
+
+          for (const userId in users) {
+            const user = users[userId];
+            const socketId = Object.keys(socketToUserId).find(
+              (key) => socketToUserId[key] === userId
+            );
+
+            if (user.betAmount > 0) {
+              if (!user.hasCashedOut) {
+                io.to(socketId).emit("bet_lost", {
+                  message: `You lost $${
+                    user.betAmount
+                  } as the plane crashed at ${crashPoint.toFixed(2)}x.`,
+                  crashPoint: crashPoint.toFixed(2),
+                });
+                console.log(`User ${userId} lost $${user.betAmount}`);
+              }
             }
           }
-          // After crash, reset game after 5 seconds
+
           setTimeout(() => {
             startGame();
-          }, 5000); // Delay before starting the next game
+          }, 5000);
         }
-      }, 80); // Every 70ms, increase multiplier by 0.01x
-    }, 5000); // 5 seconds for placing bets
+      }, 80);
+    }, 5000);
   };
 
   io.on("connection", async (socket) => {
     console.log("User connected:", socket.id);
 
-    users[socket.id] = { betAmount: 0, hasCashedOut: false };
+    const user_id = "677653e29f5c3672996dea01"; // Replace with actual logic to fetch userId
+    socketToUserId[socket.id] = user_id;
+    users[user_id] = { betAmount: 0, hasCashedOut: false };
 
-    //Manualy inserted user_id later for every user.
-    const user_id = "677653e29f5c3672996dea01";
-    const user = await User.findById(user_id);
-    if (!user) {
-      console.log("User not found");
-    }
-    console.log(`User connected: ${user.username}`);
+    //console.log(`User ${user_id} connected`);
 
     socket.on("place_bet", (betAmount) => {
-      if (multiplier === 1) {
-        // Only allow bets before the multiplier starts
-        users[socket.id].betAmount = betAmount;
-        users[socket.id].hasCashedOut = false;
-        console.log(`User ${socket.id} placed a bet of $${betAmount}`);
-        //saveBet(socket.id, betAmount);
-        saveBet(user_id, betAmount);
+      const userId = socketToUserId[socket.id];
+      if (multiplier === 1 && userId) {
+        // Initialize user data if it doesn't exist
+        if (!users[userId]) {
+          users[userId] = { betAmount: 0, hasCashedOut: false };
+        }
+
+        // Update bet amount
+        users[userId].betAmount = betAmount;
+        users[userId].hasCashedOut = false;
+
+        // Save the bet to the database
+        saveBet(userId, betAmount);
+        console.log(`User ${userId} placed a bet of $${betAmount}`);
       }
     });
 
     socket.on("cash_out", () => {
-      if (multiplier > 0 && !users[socket.id].hasCashedOut) {
-        const winnings = users[socket.id].betAmount * multiplier;
+      const userId = socketToUserId[socket.id];
+      if (multiplier > 0 && userId && !users[userId].hasCashedOut) {
+        const winnings = users[userId].betAmount * multiplier;
         io.to(socket.id).emit("cash_out_success", {
           winnings: winnings.toFixed(2),
           message: `${multiplier.toFixed(2)}x`,
         });
-        users[socket.id].hasCashedOut = true;
+        users[userId].hasCashedOut = true;
         console.log(
-          `User ${socket.id} cashed out with $${winnings.toFixed(
+          `User ${userId} cashed out with $${winnings.toFixed(
             2
           )} at ${multiplier.toFixed(2)}x`
         );
@@ -202,11 +199,12 @@ const gameLogic = async (io) => {
 
     socket.on("disconnect", () => {
       console.log("User disconnected:", socket.id);
-      delete users[socket.id];
+      const userId = socketToUserId[socket.id];
+      delete users[userId];
+      delete socketToUserId[socket.id];
     });
   });
 
-  // Start the game
   await startGame();
 };
 
