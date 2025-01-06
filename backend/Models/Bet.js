@@ -1,7 +1,11 @@
 const mongoose = require("mongoose");
 const betSchema = new mongoose.Schema(
   {
-    // userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
     bet_size: { type: Number },
     bet_line: { type: Number },
     bet_amount: { type: Number },

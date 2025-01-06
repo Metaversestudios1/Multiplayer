@@ -3,6 +3,8 @@
 const express = require("express");
 const router = express.Router();
 const PlaneCrash = require("../Models/PlaneCrash");
+const User = require("../Models/User");
+const Bet = require("../Models/Bet");
 
 const gameLogic = async (io) => {
   let users = {}; // Store user data and their bets
@@ -102,10 +104,18 @@ const gameLogic = async (io) => {
     }, 5000); // 5 seconds for placing bets
   };
 
-  io.on("connection", (socket) => {
+  io.on("connection", async (socket) => {
     console.log("User connected:", socket.id);
 
     users[socket.id] = { betAmount: 0, hasCashedOut: false };
+
+    // //Manualy inserted user_id later for every user.
+    // const user_id = "677653e29f5c3672996dea01";
+    // const user = await User.findById(user_id);
+    // if (!user) {
+    //   console.log("User not found");
+    // }
+    // console.log(`User connected: ${user.username}`);
 
     socket.on("place_bet", (betAmount) => {
       if (multiplier === 1) {
