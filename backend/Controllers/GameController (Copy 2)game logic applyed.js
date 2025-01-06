@@ -45,16 +45,6 @@ const gameLogic = async (io) => {
   const saveBet = async (userId, betAmount) => {
     users[userId] = { betAmount, hasCashedOut: false };
     console.log(`User ${userId} placed a bet of $${betAmount}`);
-    try {
-      const newBet = new Bet({
-        userId: userId,
-        bet_amount: betAmount,
-      });
-      await newBet.save();
-      console.log("Game bet saved successfully");
-    } catch (error) {
-      console.error("Error saving  game bet:", error);
-    }
   };
 
   const calculateGameResults = () => {
@@ -78,20 +68,20 @@ const gameLogic = async (io) => {
     return { totalBet, totalWinningAmount, adminProfit, userResults };
   };
 
-  // const saveGameHistory = async (gameResults) => {
-  //   try {
-  //     const newHistory = new GameHistory({
-  //       users: gameResults.userResults,
-  //       totalBet: gameResults.totalBet,
-  //       adminProfit: gameResults.adminProfit,
-  //       totalWinningAmount: gameResults.totalWinningAmount,
-  //     });
-  //     await newHistory.save();
-  //     console.log("Game history saved successfully");
-  //   } catch (error) {
-  //     console.error("Error saving game history:", error);
-  //   }
-  // };
+  const saveGameHistory = async (gameResults) => {
+    try {
+      const newHistory = new GameHistory({
+        users: gameResults.userResults,
+        totalBet: gameResults.totalBet,
+        adminProfit: gameResults.adminProfit,
+        totalWinningAmount: gameResults.totalWinningAmount,
+      });
+      await newHistory.save();
+      console.log("Game history saved successfully");
+    } catch (error) {
+      console.error("Error saving game history:", error);
+    }
+  };
 
   const startGame = async () => {
     console.log("Game started");
@@ -133,8 +123,7 @@ const gameLogic = async (io) => {
           io.emit("plane_crash", { crashPoint: crashPoint.toFixed(2) });
 
           const gameResults = calculateGameResults();
-          console.log("Game Result:", gameResults);
-          //saveGameHistory(gameResults);
+          saveGameHistory(gameResults);
           for (const socketId in users) {
             if (
               !users[socketId].hasCashedOut &&
@@ -165,13 +154,13 @@ const gameLogic = async (io) => {
 
     users[socket.id] = { betAmount: 0, hasCashedOut: false };
 
-    //Manualy inserted user_id later for every user.
-    const user_id = "677653e29f5c3672996dea01";
-    const user = await User.findById(user_id);
-    if (!user) {
-      console.log("User not found");
-    }
-    console.log(`User connected: ${user.username}`);
+    // //Manualy inserted user_id later for every user.
+    // const user_id = "677653e29f5c3672996dea01";
+    // const user = await User.findById(user_id);
+    // if (!user) {
+    //   console.log("User not found");
+    // }
+    // console.log(`User connected: ${user.username}`);
 
     socket.on("place_bet", (betAmount) => {
       if (multiplier === 1) {
@@ -179,8 +168,7 @@ const gameLogic = async (io) => {
         users[socket.id].betAmount = betAmount;
         users[socket.id].hasCashedOut = false;
         console.log(`User ${socket.id} placed a bet of $${betAmount}`);
-        //saveBet(socket.id, betAmount);
-        saveBet(user_id, betAmount);
+        saveBet(socket.id, betAmount);
       }
     });
 
