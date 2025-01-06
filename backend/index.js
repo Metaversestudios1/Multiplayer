@@ -52,16 +52,25 @@ const corsOptions = {
 };
 // Create HTTP server and Socket.IO server
 const server = http.createServer(app);
+// const io = new SocketIoServer(server, {
+//   path: "/socket.io", // Correct path for Socket.IO
+//   cors: {
+//     origin: "https://aviatorgame-frontend.vercel.app", // Adjust according to your frontend
+//     methods: ["GET", "POST"],
+//     credentials: true,
+//   },
+// });
+
 const io = new SocketIoServer(server, {
   path: "/socket.io", // Correct path for Socket.IO
   cors: {
-    origin: "https://aviatorgame-frontend.vercel.app", // Adjust according to your frontend
+    origin: "http://127.0.0.1:8000", // Adjust according to your frontend
     methods: ["GET", "POST"],
     credentials: true,
   },
 });
 
-//app.use("/api", GameRoutes(io));
+app.use("/api", GameRoutes(io));
 
 app.use(cors(corsOptions));
 app.use(express.json());

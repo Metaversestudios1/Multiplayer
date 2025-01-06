@@ -287,9 +287,9 @@ const User = () => {
                 <th scope="col" className="px-6 py-3 border-2 border-gray-300">
                   Status
                 </th>
-                <th scope="col" className="px-6 py-3 border-2 border-gray-300">
+                {/* <th scope="col" className="px-6 py-3 border-2 border-gray-300">
                   Action
-                </th>
+                </th> */}
               </tr>
             </thead>
 
@@ -345,7 +345,7 @@ const User = () => {
                   </td>
                   <td className="px-6 py-4 font-medium border-2">
                     <div className="flex justify-between">
-                      {item?.kycstatus === "pending" ? (
+                      {/* {item?.kycstatus === "pending" ? (
                         <div>
                           <button
                             className="bg-green-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded"
@@ -367,7 +367,7 @@ const User = () => {
                         </div>
                       ) : (
                         "-"
-                      )}
+                      )} */}
 
                       {/* <IoMdEye
                         className="text-xl text-blue-500 hover:scale-110 cursor-pointer"

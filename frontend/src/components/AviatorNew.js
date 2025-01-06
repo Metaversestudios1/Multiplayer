@@ -14,7 +14,7 @@ import io from "socket.io-client";
 // });
 
 // changed accoridng to backend
-const socket = io("https://aviatorgame-frontend.vercel.app", {
+const socket = io("http://127.0.0.1:8000", {
   path: "/socket.io", // Ensure this matches the server setup
   transports: ["websocket", "polling"], // Specify the transport method if necessary
   reconnection: true,
