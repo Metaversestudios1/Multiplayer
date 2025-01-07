@@ -81,10 +81,25 @@ const gameLogic = async (io) => {
         totalBet: gameResults.totalBet,
         adminProfit: gameResults.adminProfit,
         totalWinningAmount: gameResults.totalWinningAmount,
-        crashPoint: crashPoint.toFixed(2),
+        // crashPoint: crashPoint.toFixed(2),
       });
       await newHistory.save();
-      console.log("Game history saved successfully");
+      //console.log("Game history saved successfully");
+      if (gameResults.totalWinningAmount > 0) {
+        const userId = gameResults?.userResults[0]?.userId;
+        //console.log("USERID", userId);
+        const user = await User.findById(userId);
+        if (user) {
+          user.balance =
+            (user.balance || 0) + parseFloat(gameResults.totalWinningAmount);
+          await user.save();
+          // console.log(
+          //   `User ${gameResults?.userResults[0]?.userId} balance updated to ${user.balance}`
+          // );
+        } else {
+          console.log(`User ${userResult.userId} not found`);
+        }
+      }
     } catch (error) {
       console.error("Error saving game history:", error);
     }

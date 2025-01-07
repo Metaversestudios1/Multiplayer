@@ -275,7 +275,7 @@ const updateuser = async (req, res) => {
     }
 
     // Ensure the previous coins value is a number, default to 0 if it's non-existent or a string
-    let previousCoins = user.coins;
+    let previousCoins = user.balance;
 
     if (
       previousCoins === undefined ||
@@ -292,16 +292,16 @@ const updateuser = async (req, res) => {
       ? Number(updatedata.oldData.bonus)
       : 0;
 
-    // Calculate the new coins value
-    updatedata.oldData.coins = previousCoins + bonus;
+    // Calculate the new balance value
+    updatedata.oldData.balance = previousCoins + bonus;
 
-    // Update the user's data (including coins if necessary)
+    // Update the user's data (including balance if necessary)
     const result = await User.updateOne(
       { _id: id },
       {
         $set: {
           ...updatedata.oldData, // Ensure other fields are updated as well
-          coins: updatedata.oldData.coins, // Ensure the coins field is updated
+          balance: updatedata.oldData.balance, // Ensure the balance field is updated
         },
       }
     );
@@ -316,6 +316,16 @@ const updateuser = async (req, res) => {
 
     // Log the result to confirm update
     //console.log("Update result:", result);
+
+    // Create the ledger entry for the transaction
+    const ledgerEntry = new Ledger({
+      source: "admin add", // or "admin deduct"
+      user_id: id,
+      balance: updatedata.oldData.balance,
+      amount: bonus,
+    });
+
+    await ledgerEntry.save();
 
     res.status(201).json({ success: true, result: result });
   } catch (err) {
