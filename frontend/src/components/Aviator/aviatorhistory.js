@@ -52,7 +52,7 @@ const Aviatorhistory = () => {
 
       const res = await fetch(apiUrl);
       const response = await res.json();
-      console.log("aviation history:", response);
+      //console.log("aviation history:", response.result[0]?.users[0].username);
       if (response.success) {
         setNoData(false); // Reset no data state if data is returned
         console.log(response.result);
@@ -285,10 +285,19 @@ const Aviatorhistory = () => {
                     scope="row"
                     className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap border-2 border-gray-300"
                   >
-                    {item?.user?.username}
+                    {item?.users[0]?.username}
                   </th>
                   <td className="px-6 py-4 border-2 border-gray-300">
-                    {item?.date?.split("T")[0]}
+                    {item?.date
+                      ? new Intl.DateTimeFormat("en-US", {
+                          year: "numeric",
+                          month: "long",
+                          day: "2-digit",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          second: "2-digit",
+                        }).format(new Date(item.createdAt))
+                      : "N/A"}
                   </td>
                   <td className="px-6 py-4 border-2 border-gray-300">
                     {item?.totalBet}

@@ -1,5 +1,6 @@
 const history = require("../../Models/Aviator/AviatorHistory");
 const bcrypt = require("bcrypt");
+const User = require("../../Models/User");
 
 const getAllaviatorhistory = async (req, res) => {
   try {
@@ -29,7 +30,42 @@ const getAllaviatorhistory = async (req, res) => {
       .skip((page - 1) * pageSize)
       .limit(pageSize);
     const count = await history.find(query).countDocuments();
-    res.status(200).json({ success: true, result, count });
+    // Extract unique userIds from history
+    // const userIds = [
+    //   ...new Set(
+    //     result.flatMap((record) => record.users.map((user) => user.userId))
+    //   ),
+    // ];
+
+    // Fetch all users with selected fields
+    // const allUsers = await User.find({ _id: { $in: userIds } }).select(
+    //   "username _id"
+    // );
+
+    const allUsers = await User.find().select("username _id");
+
+    //console.log(allUsers);
+
+    // Attach usernames to the final result
+    const finalResult = result.map((record) => {
+      const usersWithDetails = record.users.map((user) => {
+        const matchingUser = allUsers.find(
+          (u) => u._id.toString() === user.userId
+        );
+        return {
+          ...user,
+          username: matchingUser ? matchingUser.username : "Unknown", // Attach username
+        };
+      });
+
+      return {
+        ...record.toObject(),
+        users: usersWithDetails,
+      };
+    });
+    //console.log(finalResult);
+
+    res.status(200).json({ success: true, result: finalResult, count });
   } catch (error) {
     res
       .status(500)
