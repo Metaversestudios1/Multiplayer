@@ -52,9 +52,17 @@ function AviatorGame() {
   const { userAuth, setUserAuth } = useContext(UserAuthContext); // Access auth state of user
   const navigate = useNavigate();
 
+  // useEffect(() => {
+  //   console.log("Logged-in user data:", userAuth.user._id);
+  // }, []);
+
   useEffect(() => {
-    console.log("Logged-in user data:", userAuth);
-  }, []);
+    if (userAuth?.user?._id) {
+      // After successful login, pass the user_id to the socket
+      socket.emit("join_game", { user_id: userAuth.user._id });
+      console.log("User ID sent to socket:", userAuth.user._id);
+    }
+  }, [userAuth]);
 
   const handleLogout = async () => {
     try {

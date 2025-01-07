@@ -156,11 +156,19 @@ const gameLogic = async (io) => {
   io.on("connection", async (socket) => {
     console.log("User connected:", socket.id);
 
-    const user_id = "677653e29f5c3672996dea01"; // Replace with actual logic to fetch userId
-    socketToUserId[socket.id] = user_id;
-    users[user_id] = { betAmount: 0, hasCashedOut: false };
+    // const user_id = "677653e29f5c3672996dea01"; // Replace with actual logic to fetch userId
+    // socketToUserId[socket.id] = user_id;
+    // users[user_id] = { betAmount: 0, hasCashedOut: false };
 
     //console.log(`User ${user_id} connected`);
+
+    socket.on("join_game", (data) => {
+      console.log("User joined the game with ID:", data.user_id);
+      //socket.user_id = data.user_id;
+      const user_id = data.user_id;
+      socketToUserId[socket.id] = user_id;
+      users[user_id] = { betAmount: 0, hasCashedOut: false };
+    });
 
     socket.on("place_bet", (betAmount) => {
       const userId = socketToUserId[socket.id];
