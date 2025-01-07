@@ -69,8 +69,8 @@ const LoginUser = () => {
         toast.success("Login Successful!");
         //Cookies.set("jwt_user", response.token);
         Cookies.set("jwt_user", response.token, {
-          secure: false,
-          sameSite: "Lax",
+          secure: false, // Ensures the cookie is sent only over HTTPS
+          sameSite: "Lax", // Allows the cookie to be sent in third-party contexts (e.g., cross-site)
         });
 
         console.log("user login response:", response);

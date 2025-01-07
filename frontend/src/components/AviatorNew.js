@@ -71,7 +71,7 @@ function AviatorGame() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${Cookies.get("jwt")}`,
+          Authorization: `Bearer ${Cookies.get("jwt_user")}`,
         },
       });
 
