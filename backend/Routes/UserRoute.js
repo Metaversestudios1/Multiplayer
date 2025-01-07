@@ -16,6 +16,8 @@ const {
   changeUserStatus,
   addWalletUser,
   removeWalletUser,
+  loginUser,
+  logoutUser,
 } = require("../Controllers/UserController");
 const express = require("express");
 const router = express.Router();
@@ -37,5 +39,7 @@ router.get("/getsumofbonus", getSumOfBonus);
 router.put("/changeuserstatus/:userId", changeUserStatus);
 router.put("/addwalletuser", addWalletUser);
 router.put("/removewalletuser", removeWalletUser);
+router.post("/loginuser", loginUser);
+router.post("/logoutuser", logoutUser);
 
 module.exports = router;

@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from "react";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 import getUserFromToken from "../components/utils/getUserFromToken";
 export const AuthContext = createContext();
 
@@ -34,7 +34,7 @@ const AuthProvider = ({ children }) => {
   // };
 
   const token = Cookies.get("jwt");
-  const user = getUserFromToken()
+  const user = getUserFromToken();
   useEffect(() => {
     // fetchAuth();
     if (token) {
@@ -46,7 +46,7 @@ const AuthProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ auth, setAuth,setLoading, loading }}>
+    <AuthContext.Provider value={{ auth, setAuth, setLoading, loading }}>
       {children}
     </AuthContext.Provider>
   );

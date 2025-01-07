@@ -1,5 +1,8 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import io from "socket.io-client";
+import { UserAuthContext } from "../context/UserAuthContext";
+import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
 
 //const socket = io(`http://localhost:8000`);
 // const socket = io("https://aviatorgame-backend.vercel.app", {
@@ -45,6 +48,37 @@ function AviatorGame() {
   const [crashPoint, setCrashPoint] = useState("");
 
   const gameRef = useRef(null);
+
+  const { userAuth, setUserAuth } = useContext(UserAuthContext); // Access auth state of user
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    console.log("Logged-in user data:", userAuth);
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      // Send a request to the backend logout endpoint
+      const response = await fetch("http://127.0.0.1:8000/api/logoutuser", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${Cookies.get("jwt")}`,
+        },
+      });
+
+      if (response.ok) {
+        // Clear cookies and reset auth state
+        Cookies.remove("jwt_user");
+        setUserAuth({ isAuthenticated: false, user: null });
+        navigate("/loginuser"); // Redirect to the login page
+      } else {
+        console.error("Failed to log out");
+      }
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
+  };
 
   useEffect(() => {
     socket.on("multiplier_reset", () => {
@@ -207,6 +241,12 @@ function AviatorGame() {
   return (
     <div className="game-container">
       <div className="game-screen">
+        <button
+          onClick={handleLogout}
+          className="bg-red-600 px-4 py-2 rounded-lg text-white"
+        >
+          Logout
+        </button>
         <div className="history text-xl">History of bets</div>
         <div
           className="game"

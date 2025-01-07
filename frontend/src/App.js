@@ -26,6 +26,9 @@ import Bankdetailskyc from "./components/KYCUser/bankdetailskyc";
 import Withdrawdashboard from "./components/withdraw/withdrawdashboard";
 import Aviatorhistory from "./components/Aviator/aviatorhistory";
 
+import UserAuthProvider from "./context/UserAuthContext"; //new context to store user auth status
+import UserProtectedRoute from "./components/utils/UserProtectedRoute";
+
 //new component added
 import AddUser from "./components/User/AddUser";
 import EditUser from "./components/User/EditUser";
@@ -38,6 +41,8 @@ import RemoveWallet from "./components/User/RemoveWallet";
 import Ledger from "./components/User/Ledger";
 import Notification from "./components/setting/notification/Notification";
 import AddNotification from "./components/setting/notification/AddNotification";
+import LoginUser from "./components/LoginUser";
+//import LogoutUser from "./components/LogoutUser";
 
 function App() {
   const [sideBar, setSideBar] = useState(true);
@@ -101,8 +106,26 @@ function App() {
 
     {
       path: "/aviatornew",
-      element: <AviatorNew />,
+      element: (
+        <UserProtectedRoute>
+          <Navbar toggleSideBar={toggleSideBar} />
+          <AviatorNew />
+        </UserProtectedRoute>
+      ),
     },
+
+    // {
+    //   path: "/aviatornew",
+    //   element: <AviatorNew />,
+    // },
+    {
+      path: "/loginuser",
+      element: <LoginUser />,
+    },
+    // {
+    //   path: "/logoutuser",
+    //   element: <LogoutUser />,
+    // },
     {
       path: "/bankdetails",
       element: (
@@ -612,7 +635,9 @@ function App() {
 
   return (
     <AuthProvider>
-      <RouterProvider router={router} />
+      <UserAuthProvider>
+        <RouterProvider router={router} />
+      </UserAuthProvider>
     </AuthProvider>
   );
 }
