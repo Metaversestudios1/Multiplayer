@@ -179,6 +179,44 @@ const getApprovedRecharge = async (req, res) => {
   }
 };
 
+const getRejectedWithdraw = async (req, res) => {
+  try {
+    const count = await Transaction.countDocuments({
+      transactionType: "withdraw",
+      status: "rejected",
+    });
+
+    // Return the count as a response
+    res.status(200).json({ success: true, count });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "Server error. Please try again later.",
+      error: error.message,
+    });
+  }
+};
+
+const getRejectedRecharge = async (req, res) => {
+  try {
+    const count = await Transaction.countDocuments({
+      transactionType: "recharge",
+      status: "rejected",
+    });
+
+    // Return the count as a response
+    res.status(200).json({ success: true, count });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "Server error. Please try again later.",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   insertUserBank,
   updateUserBank,
@@ -189,4 +227,6 @@ module.exports = {
   getSingleUserBankID,
   getApprovedWithdraw,
   getApprovedRecharge,
+  getRejectedWithdraw,
+  getRejectedRecharge,
 };

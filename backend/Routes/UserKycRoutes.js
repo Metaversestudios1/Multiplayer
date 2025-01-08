@@ -8,6 +8,8 @@ const {
   getSingleUserBankID,
   getApprovedWithdraw,
   getApprovedRecharge,
+  getRejectedWithdraw,
+  getRejectedRecharge,
 } = require("../Controllers/KycController");
 const express = require("express");
 const router = express.Router();
@@ -22,5 +24,6 @@ router.delete("/deleteUserBank", deleteUserBank);
 
 router.get("/getapprovedwithdraw", getApprovedWithdraw);
 router.get("/getapprovedrecharge", getApprovedRecharge);
-
+router.get("/getrejectedwithdraw", getRejectedWithdraw);
+router.get("/getrejectedrecharge", getRejectedRecharge);
 module.exports = router;

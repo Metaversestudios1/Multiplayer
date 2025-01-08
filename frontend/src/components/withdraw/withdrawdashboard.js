@@ -14,6 +14,8 @@ const Withdrawdashboard = () => {
   const [sumofBonus, setSumOfBonus] = useState(0);
   const [totalApprovedWithdraws, setTotalApprovedWithdraws] = useState(0);
   const [totalApprovedRecharges, setTotalApprovedRechargess] = useState(0);
+  const [totalRejectedWithdraws, setTotalRejectedwithdraws] = useState(0);
+  const [totalRejectedRecharges, setTotalRejectedrecharges] = useState(0);
 
   useEffect(() => {
     setLoader(true);
@@ -29,6 +31,8 @@ const Withdrawdashboard = () => {
       fetchBonus(),
       fetchApprovedWithdrawsCount(),
       fetchApprovedRechargeCount(),
+      fetchRejectedWithdrawsCount(),
+      fetchRejectedRechargeCount(),
     ]).finally(() => {
       setLoader(false);
     });
@@ -135,6 +139,24 @@ const Withdrawdashboard = () => {
     //console.log("fetchApprovedRechargeCount:", response.count);
     setTotalApprovedRechargess(response.count);
   };
+
+  const fetchRejectedWithdrawsCount = async () => {
+    const res = await fetch(
+      `${process.env.REACT_APP_BACKEND_URL}/api/getrejectedwithdraw`
+    );
+    const response = await res.json();
+    //console.log("fetchRejectedWithdrawsCount:", response.count);
+    setTotalRejectedwithdraws(response.count);
+  };
+
+  const fetchRejectedRechargeCount = async () => {
+    const res = await fetch(
+      `${process.env.REACT_APP_BACKEND_URL}/api/getrejectedrecharge`
+    );
+    const response = await res.json();
+    //console.log("fetchRejectedRechargeCount:", response.count);
+    setTotalRejectedrecharges(response.count);
+  };
   return (
     <div>
       {loader ? (
@@ -239,6 +261,34 @@ const Withdrawdashboard = () => {
                       </span>
                       <h3 className="text-base font-normal text-gray-500">
                         Approved Withdrawals
+                      </h3>
+                    </div>
+                  </div>
+                </NavLink>
+              </div>
+              <div className="bg-white shadow-lg rounded-2xl p-4">
+                <NavLink to="/request">
+                  <div className="flex items-center">
+                    <div className="inline-flex justify-center items-center w-12 h-12 text-white bg-[#1E88E5] rounded-lg">
+                      <svg
+                        className="w-8 h-8"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z"
+                          clipRule="evenodd"
+                        ></path>
+                      </svg>
+                    </div>
+                    <div className="ml-3">
+                      <span className="text-2xl font-bold text-gray-900">
+                        {totalRejectedWithdraws}
+                      </span>
+                      <h3 className="text-base font-normal text-gray-500">
+                        Rejected Withdrawals
                       </h3>
                     </div>
                   </div>
@@ -435,6 +485,34 @@ const Withdrawdashboard = () => {
                       </span>
                       <h3 className="text-base font-normal text-gray-500">
                         Approved Recharges
+                      </h3>
+                    </div>
+                  </div>
+                </NavLink>
+              </div>
+              <div className="bg-white shadow-lg rounded-2xl p-4">
+                <NavLink to="/request">
+                  <div className="flex items-center">
+                    <div className="inline-flex justify-center items-center w-12 h-12 text-white bg-[#1E88E5] rounded-lg">
+                      <svg
+                        className="w-8 h-8"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z"
+                          clipRule="evenodd"
+                        ></path>
+                      </svg>
+                    </div>
+                    <div className="ml-3">
+                      <span className="text-2xl font-bold text-gray-900">
+                        {totalRejectedRecharges}
+                      </span>
+                      <h3 className="text-base font-normal text-gray-500">
+                        Rejected Recharges
                       </h3>
                     </div>
                   </div>
