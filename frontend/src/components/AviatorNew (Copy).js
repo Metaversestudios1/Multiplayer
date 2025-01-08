@@ -4,10 +4,22 @@ import { UserAuthContext } from "../context/UserAuthContext";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 
-// Configure socket connection
+//const socket = io(`http://localhost:8000`);
+// const socket = io("https://aviatorgame-backend.vercel.app", {
+//   transports: ["websocket"], // Ensure you're using WebSocket for better connectivity
+// });
+
+// const socket = io('https://aviatorgame-9ukw.onrender.com', {
+//   path: '/socket.io', // Ensure this matches the server setup
+//   transports: ['websocket','polling'], // Specify the transport method if necessary
+//   reconnection:true,
+//   reconnectionAttempts:5
+// });
+
+// changed accoridng to backend
 const socket = io("http://127.0.0.1:8000", {
-  path: "/socket.io",
-  transports: ["websocket", "polling"],
+  path: "/socket.io", // Ensure this matches the server setup
+  transports: ["websocket", "polling"], // Specify the transport method if necessary
   reconnection: true,
   reconnectionAttempts: 5,
 });
@@ -34,47 +46,27 @@ function AviatorGame() {
   const [message, setMessage] = useState("");
   const [cashOutMultiplier, setCashOutMultiplier] = useState("");
   const [crashPoint, setCrashPoint] = useState("");
-  const [isServerDisconnected, setIsServerDisconnected] = useState(false);
 
   const gameRef = useRef(null);
-  const { userAuth, setUserAuth } = useContext(UserAuthContext);
+
+  const { userAuth, setUserAuth } = useContext(UserAuthContext); // Access auth state of user
   const navigate = useNavigate();
 
-  // Emit userId on initial connection and reconnection
+  // useEffect(() => {
+  //   console.log("Logged-in user data:", userAuth.user._id);
+  // }, []);
+
   useEffect(() => {
     if (userAuth?.user?._id) {
+      // After successful login, pass the user_id to the socket
       socket.emit("join_game", { user_id: userAuth.user._id });
       console.log("User ID sent to socket:", userAuth.user._id);
     }
-
-    socket.on("connect", () => {
-      console.log("Connected to server");
-      if (userAuth?.user?._id) {
-        console.log("Reconnected, sending userId...");
-        socket.emit("join_game", { user_id: userAuth.user._id });
-      }
-      setIsServerDisconnected(false);
-    });
-
-    socket.on("disconnect", () => {
-      console.warn("Disconnected from server");
-      setIsServerDisconnected(true);
-    });
-
-    socket.on("reconnect", () => {
-      console.log("Reconnected to server");
-      setIsServerDisconnected(false);
-    });
-
-    return () => {
-      socket.off("connect");
-      socket.off("disconnect");
-      socket.off("reconnect");
-    };
   }, [userAuth]);
 
   const handleLogout = async () => {
     try {
+      // Send a request to the backend logout endpoint
       const response = await fetch("http://127.0.0.1:8000/api/logoutuser", {
         method: "POST",
         headers: {
@@ -84,9 +76,10 @@ function AviatorGame() {
       });
 
       if (response.ok) {
+        // Clear cookies and reset auth state
         Cookies.remove("jwt_user");
         setUserAuth({ isAuthenticated: false, user: null });
-        navigate("/loginuser");
+        navigate("/loginuser"); // Redirect to the login page
       } else {
         console.error("Failed to log out");
       }
@@ -97,20 +90,22 @@ function AviatorGame() {
 
   useEffect(() => {
     socket.on("multiplier_reset", () => {
+      // Reset all states for the new round
       setIsBetPlaced(false);
       setBetAmount(0);
       setLoadingComplete(false);
-      setIsPlaneVisible(false);
-      setMultiplier(0);
-      setIsCrashed(false);
+      setIsPlaneVisible(false); // Hide the plane during loading
+      setMultiplier(0); // Reset multiplier to 0 to avoid showing old values
+      setIsCrashed(false); // Reset crashed state early
       setMessage("");
       setCrashPoint("");
-      setShowLoader(true);
 
+      // Show the loader and delay the start of the new round
+      setShowLoader(true);
       setTimeout(() => {
         setLoadingComplete(true);
-        setShowLoader(false);
-        setIsPlaneVisible(false);
+        setShowLoader(false); // Hide loader after loading is complete
+        setIsPlaneVisible(false); // Keep the plane hidden until the multiplier starts
         setWinnings(0);
       }, 5000);
     });
@@ -125,19 +120,21 @@ function AviatorGame() {
 
     socket.on("multiplier_update", (data) => {
       setMultiplier(data.multiplier);
+
+      // Ensure the plane becomes visible only when multiplier updates
       if (!isCrashed && !isPlaneVisible) {
         setIsPlaneVisible(true);
-        movePlaneDiagonally();
+        movePlaneDiagonally(); // Start moving the plane after multiplier is updated
       }
     });
 
     socket.on("plane_crash", ({ crashPoint }) => {
-      setIsPlaneVisible(false);
-      setIsCrashed(true);
-      setShowLoader(true);
+      setIsPlaneVisible(false); // Hide the plane immediately on crash
+      setIsCrashed(true); // Set crash state
+      setShowLoader(true); // Show loader during crash reset
       setMessage(`Flew away`);
       setCrashPoint(crashPoint);
-      resetPlanePosition();
+      resetPlanePosition(); // Reset plane position for next round
     });
 
     socket.on("cash_out_success", (data) => {
@@ -159,7 +156,6 @@ function AviatorGame() {
     setPlanePosition({ x: 0, y: 0 });
     setShowLoader(false);
   };
-
   const movePlaneDiagonally = () => {
     const gameWidth = gameRef.current.offsetWidth;
     const gameHeight = gameRef.current.offsetHeight;
@@ -168,38 +164,39 @@ function AviatorGame() {
     let yPos = 0;
 
     const animate = () => {
-      xPos += gameWidth / 500;
+      xPos += gameWidth / 500; // Adjust for smoother, slower movement
       yPos += gameHeight / 500;
 
       setPlanePosition({ x: xPos, y: yPos });
 
+      // Stop when it reaches the end of the screen
       if (xPos < gameWidth - 70 && yPos < gameHeight - 95) {
-        requestAnimationFrame(animate);
+        requestAnimationFrame(animate); // Continue animating
       } else {
-        oscillatePlane(xPos, yPos);
+        oscillatePlane(xPos, yPos); // Start oscillating when plane reaches the end
       }
     };
 
-    requestAnimationFrame(animate);
+    requestAnimationFrame(animate); // Start the animation loop
   };
 
   const oscillatePlane = (finalX, finalY) => {
-    const oscillationAmplitude = 14;
-    const oscillationFrequency = 0.05;
+    const oscillationAmplitude = 14; // Height of oscillation
+    const oscillationFrequency = 0.05; // Speed of oscillation
     let oscillationPhase = 0;
 
     const animateOscillation = () => {
       oscillationPhase += oscillationFrequency;
       const newY = finalY + oscillationAmplitude * Math.sin(oscillationPhase);
 
-      setPlanePosition({ x: finalX, y: newY });
+      setPlanePosition({ x: finalX, y: newY }); // Update Y position for oscillation
 
       if (!isCrashed) {
-        requestAnimationFrame(animateOscillation);
+        requestAnimationFrame(animateOscillation); // Continue oscillating
       }
     };
 
-    requestAnimationFrame(animateOscillation);
+    requestAnimationFrame(animateOscillation); // Start the oscillation animation
   };
 
   const handlePlaceBet = () => {
@@ -212,10 +209,11 @@ function AviatorGame() {
   const handleCashOut = () => {
     if (multiplier > 0 && !isCrashed) {
       socket.emit("cash_out");
-      setIsBetPlaced(false);
+      setIsBetPlaced(false); // Disable cashout after it's clicked
     }
   };
 
+  // Conditionally render the bet or cashout button based on game state
   const renderActionButton = () => {
     if (isCrashed) {
       return (
@@ -251,11 +249,6 @@ function AviatorGame() {
   return (
     <div className="game-container">
       <div className="game-screen">
-        {isServerDisconnected && (
-          <div className="server-disconnected">
-            Server Disconnected! Trying to reconnect...
-          </div>
-        )}
         <button
           onClick={handleLogout}
           className="bg-red-600 px-4 py-2 rounded-lg text-white"
