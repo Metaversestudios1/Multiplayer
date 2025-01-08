@@ -25,7 +25,7 @@ const sendEmailNotification = async (req, res) => {
 
     if (isGlobalBool) {
       // Fetch all users for global notification
-      const users = await User.find();
+      const users = await User.find({ deleted_at: null });
       if (!users || users.length === 0) {
         return res
           .status(404)
