@@ -79,11 +79,23 @@ const insertleadboard = async (req, res) => {
 
 const getAllleadboard = async (req, res) => {
   try {
+    const pageSize = parseInt(req.query.limit);
+    const page = parseInt(req.query.page);
+    const search = req.query.search;
+
     const query = {
       deleted_at: null,
     };
 
-    const result = await LeadBoard.find(query).sort({ createdAt: -1 });
+    if (search) {
+      query.username = { $regex: search, $options: "i" };
+    }
+
+    //const result = await LeadBoard.find(query).sort({ createdAt: -1 });
+    const result = await LeadBoard.find(query)
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * pageSize)
+      .limit(pageSize);
     const count = await LeadBoard.find(query).countDocuments();
     res.status(200).json({ success: true, result, count });
   } catch (error) {

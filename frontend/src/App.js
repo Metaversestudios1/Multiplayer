@@ -43,6 +43,7 @@ import Notification from "./components/setting/notification/Notification";
 import AddNotification from "./components/setting/notification/AddNotification";
 import LoginUser from "./components/LoginUser";
 //import LogoutUser from "./components/LogoutUser";
+import Leadboard from "./components/leadboard/Leadboard";
 
 function App() {
   const [sideBar, setSideBar] = useState(true);
@@ -621,6 +622,25 @@ function App() {
             <div className="flex flex-col flex-grow overflow-y-auto flex-[3]">
               <Navbar toggleSideBar={toggleSideBar} />
               <AddNotification />
+            </div>
+          </div>
+        </PrivateRoute>
+      ),
+    },
+
+    {
+      path: "/leadboard",
+      element: (
+        <PrivateRoute>
+          <div className="flex h-screen">
+            <Sidebar
+              sidebar={sideBar}
+              className="flex-1"
+              toggleSideBar={toggleSideBar}
+            />
+            <div className="flex flex-col flex-grow overflow-y-auto flex-[3]">
+              <Navbar toggleSideBar={toggleSideBar} />
+              <Leadboard />
             </div>
           </div>
         </PrivateRoute>
