@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken");
 const twilio = require("twilio");
 const Promocode = require("../Models/User");
 const Ledger = require("../Models/Ledger");
+const AviatorSetting = require("../Models/Setting");
 
 const sendmailsms = async (req, res) => {
   const { email, contact } = req.body;
@@ -275,16 +276,16 @@ const updateuser = async (req, res) => {
     }
 
     // Ensure the previous coins value is a number, default to 0 if it's non-existent or a string
-    let previousCoins = user.balance;
+    let previousBalance = user.balance;
 
     if (
-      previousCoins === undefined ||
-      previousCoins === "0" ||
-      previousCoins === null
+      previousBalance === undefined ||
+      previousBalance === "0" ||
+      previousBalance === null
     ) {
-      previousCoins = 0;
+      previousBalance = 0;
     } else {
-      previousCoins = Number(previousCoins);
+      previousBalance = Number(previousBalance);
     }
 
     // Default bonus to 0 if not provided
@@ -293,7 +294,7 @@ const updateuser = async (req, res) => {
       : 0;
 
     // Calculate the new balance value
-    updatedata.oldData.balance = previousCoins + bonus;
+    updatedata.oldData.balance = previousBalance + bonus;
 
     // Update the user's data (including balance if necessary)
     const result = await User.updateOne(
@@ -314,18 +315,17 @@ const updateuser = async (req, res) => {
       });
     }
 
-    // Log the result to confirm update
-    //console.log("Update result:", result);
+    if (req.body.oldData.bonus > 0) {
+      // Create the ledger entry for the transaction
+      const ledgerEntry = new Ledger({
+        source: "admin add", // or "admin deduct"
+        user_id: id,
+        balance: updatedata.oldData.balance,
+        amount: bonus,
+      });
 
-    // Create the ledger entry for the transaction
-    const ledgerEntry = new Ledger({
-      source: "admin add", // or "admin deduct"
-      user_id: id,
-      balance: updatedata.oldData.balance,
-      amount: bonus,
-    });
-
-    await ledgerEntry.save();
+      await ledgerEntry.save();
+    }
 
     res.status(201).json({ success: true, result: result });
   } catch (err) {
