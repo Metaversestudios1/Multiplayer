@@ -118,6 +118,7 @@ const Payment = () => {
           });
           if (projectOne) {
             setPage((prevPage) => Math.max(prevPage - 1, 1));
+            setTimeout(() => fetchPayment(), 100);
           } else {
             fetchPayment();
           }

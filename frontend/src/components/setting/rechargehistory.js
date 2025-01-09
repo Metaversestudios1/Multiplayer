@@ -56,7 +56,7 @@ const Payment = () => {
       // );
       const res = await fetch(apiUrl);
       const response = await res.json();
-      console.log("recharge history:", response);
+      //console.log("recharge history:", response);
       if (response.success) {
         const paymentWithuser = await Promise.all(
           response.result.map(async (users) => {
@@ -111,6 +111,7 @@ const Payment = () => {
           }
         );
         const response = await res.json();
+        //console.log("status change response:", response);
         if (response.success) {
           toast.success(`Transaction is ${newStatus} Successfully!`, {
             position: "top-right",
@@ -118,6 +119,7 @@ const Payment = () => {
           });
           if (projectOne) {
             setPage((prevPage) => Math.max(prevPage - 1, 1));
+            setTimeout(() => fetchPayment(), 100);
           } else {
             fetchPayment();
           }
