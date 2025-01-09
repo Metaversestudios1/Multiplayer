@@ -224,7 +224,29 @@ const insertuser = async (req, res) => {
         .toString()
         .slice(0, 4)
         .toUpperCase()}`; // Adjust as necessary
-      await existingUser.save(); // Save updated user record
+
+      //await existingUser.save(); // Save updated user record
+      //console.log("promocode", existingUser.promocode);
+      // Check Aviator settings for initial bonus
+      const aviatorSettings = await AviatorSetting.findOne();
+      if (aviatorSettings && aviatorSettings.initialBonus) {
+        const bonus = aviatorSettings.initialBonus;
+        existingUser.balance = (existingUser.balance || 0) + bonus; // Update balance
+
+        if (aviatorSettings.initialBonus > 0) {
+          // Create ledger entry for the bonus
+          const ledgerEntry = new Ledger({
+            source: "Initial Bonus",
+            user_id: existingUser._id,
+            balance: existingUser.balance,
+            amount: bonus,
+          });
+
+          await ledgerEntry.save();
+        }
+      }
+      // Save updated user record
+      await existingUser.save();
       return res
         .status(200)
         .json({ success: true, message: "User register successfully" });
