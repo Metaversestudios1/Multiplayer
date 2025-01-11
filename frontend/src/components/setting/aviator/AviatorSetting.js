@@ -34,7 +34,7 @@ const AviatorSetting = () => {
       `${process.env.REACT_APP_BACKEND_URL}/api/getAllSetting`
     );
     const response = await res.json();
-    console.log("Aviator settings:", response);
+    //console.log("Aviator settings:", response);
     if (response.success) {
       setData({
         ...data,

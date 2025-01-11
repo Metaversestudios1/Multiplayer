@@ -44,6 +44,11 @@ import AddNotification from "./components/setting/notification/AddNotification";
 import LoginUser from "./components/LoginUser";
 //import LogoutUser from "./components/LogoutUser";
 import Leadboard from "./components/leadboard/Leadboard";
+import Games from "./components/Games/Games";
+import AddGame from "./components/Games/AddGame";
+import EditGame from "./components/Games/EditGame";
+import AddOrEditGameSettings from "./components/Games/AddOrEditGameSettings";
+import SingleGameSettings from "./components/Games/SingleGameSettings";
 
 function App() {
   const [sideBar, setSideBar] = useState(true);
@@ -641,6 +646,98 @@ function App() {
             <div className="flex flex-col flex-grow overflow-y-auto flex-[3]">
               <Navbar toggleSideBar={toggleSideBar} />
               <Leadboard />
+            </div>
+          </div>
+        </PrivateRoute>
+      ),
+    },
+    {
+      path: "/games",
+      element: (
+        <PrivateRoute>
+          <div className="flex h-screen">
+            <Sidebar
+              sidebar={sideBar}
+              className="flex-1"
+              toggleSideBar={toggleSideBar}
+            />
+            <div className="flex flex-col flex-grow overflow-y-auto flex-[3]">
+              <Navbar toggleSideBar={toggleSideBar} />
+              <Games />
+            </div>
+          </div>
+        </PrivateRoute>
+      ),
+    },
+    {
+      path: "/addgame",
+      element: (
+        <PrivateRoute>
+          <div className="flex h-screen">
+            <Sidebar
+              sidebar={sideBar}
+              className="flex-1"
+              toggleSideBar={toggleSideBar}
+            />
+            <div className="flex flex-col flex-grow overflow-y-auto flex-[3]">
+              <Navbar toggleSideBar={toggleSideBar} />
+              <AddGame />
+            </div>
+          </div>
+        </PrivateRoute>
+      ),
+    },
+    {
+      path: "/editgame/:id",
+      element: (
+        <PrivateRoute>
+          <div className="flex h-screen">
+            <Sidebar
+              sidebar={sideBar}
+              className="flex-1"
+              toggleSideBar={toggleSideBar}
+            />
+            <div className="flex flex-col flex-grow overflow-y-auto flex-[3]">
+              <Navbar toggleSideBar={toggleSideBar} />
+              <EditGame />
+            </div>
+          </div>
+        </PrivateRoute>
+      ),
+    },
+
+    {
+      path: "/editgamesettings/:id",
+      element: (
+        <PrivateRoute>
+          <div className="flex h-screen">
+            <Sidebar
+              sidebar={sideBar}
+              className="flex-1"
+              toggleSideBar={toggleSideBar}
+            />
+            <div className="flex flex-col flex-grow overflow-y-auto flex-[3]">
+              <Navbar toggleSideBar={toggleSideBar} />
+              <AddOrEditGameSettings />
+            </div>
+          </div>
+        </PrivateRoute>
+      ),
+    },
+
+    {
+      path: "/game-settings/:id",
+      element: (
+        <PrivateRoute>
+          <div className="flex h-screen">
+            <Sidebar
+              sidebar={sideBar}
+              className="flex-1"
+              toggleSideBar={toggleSideBar}
+            />
+            <div className="flex flex-col flex-grow overflow-y-auto flex-[3]">
+              <Navbar toggleSideBar={toggleSideBar} />
+              <SingleGameSettings />
             </div>
           </div>
         </PrivateRoute>

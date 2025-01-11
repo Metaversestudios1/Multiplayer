@@ -228,23 +228,23 @@ const insertuser = async (req, res) => {
       //await existingUser.save(); // Save updated user record
       //console.log("promocode", existingUser.promocode);
       // Check Aviator settings for initial bonus
-      const aviatorSettings = await AviatorSetting.findOne();
-      if (aviatorSettings && aviatorSettings.initialBonus) {
-        const bonus = aviatorSettings.initialBonus;
-        existingUser.balance = (existingUser.balance || 0) + bonus; // Update balance
+      //const aviatorSettings = await AviatorSetting.findOne();
+      // if (aviatorSettings && aviatorSettings.initialBonus) {
+      //   const bonus = aviatorSettings.initialBonus;
+      //   existingUser.balance = (existingUser.balance || 0) + bonus; // Update balance
 
-        if (aviatorSettings.initialBonus > 0) {
-          // Create ledger entry for the bonus
-          const ledgerEntry = new Ledger({
-            source: "Initial Bonus",
-            user_id: existingUser._id,
-            balance: existingUser.balance,
-            amount: bonus,
-          });
+      //   if (aviatorSettings.initialBonus > 0) {
+      //     // Create ledger entry for the bonus
+      //     const ledgerEntry = new Ledger({
+      //       source: "Initial Bonus",
+      //       user_id: existingUser._id,
+      //       balance: existingUser.balance,
+      //       amount: bonus,
+      //     });
 
-          await ledgerEntry.save();
-        }
-      }
+      //     await ledgerEntry.save();
+      //   }
+      // }
       // Save updated user record
       await existingUser.save();
       return res
@@ -811,61 +811,61 @@ const removeWalletUser = async (req, res) => {
   }
 };
 
-const loginUser = async (req, res) => {
-  const { email, password } = req.body;
-  try {
-    if (!email || !password) {
-      return res
-        .status(404)
-        .json({ sucess: false, message: "please provide all fields" });
-    }
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res
-        .status(404)
-        .json({ sucess: false, message: "Email not found" });
-    }
-    const match = await bcrypt.compare(password, user.password);
-    if (!match) {
-      return res
-        .status(404)
-        .json({ sucess: false, message: "Password does not match" });
-    }
+// const loginUser = async (req, res) => {
+//   const { email, password } = req.body;
+//   try {
+//     if (!email || !password) {
+//       return res
+//         .status(404)
+//         .json({ sucess: false, message: "please provide all fields" });
+//     }
+//     const user = await User.findOne({ email });
+//     if (!user) {
+//       return res
+//         .status(404)
+//         .json({ sucess: false, message: "Email not found" });
+//     }
+//     const match = await bcrypt.compare(password, user.password);
+//     if (!match) {
+//       return res
+//         .status(404)
+//         .json({ sucess: false, message: "Password does not match" });
+//     }
 
-    const token = jwt.sign(
-      { id: user._id, username: user.username },
-      process.env.JWT_SECRET,
-      { expiresIn: "1h" }
-    );
+//     const token = jwt.sign(
+//       { id: user._id, username: user.username },
+//       process.env.JWT_SECRET,
+//       { expiresIn: "1h" }
+//     );
 
-    const options = {
-      expires: new Date(Date.now() + 2592000000),
-      httpOnly: true,
-      sameSite: "None",
-    };
-    res.cookie("token", token, options).json({
-      success: true,
-      token,
-      user,
-    });
-  } catch (err) {
-    res
-      .status(500)
-      .json({ success: false, message: "Server error: " + err.message });
-  }
-};
+//     const options = {
+//       expires: new Date(Date.now() + 2592000000),
+//       httpOnly: true,
+//       sameSite: "None",
+//     };
+//     res.cookie("token", token, options).json({
+//       success: true,
+//       token,
+//       user,
+//     });
+//   } catch (err) {
+//     res
+//       .status(500)
+//       .json({ success: false, message: "Server error: " + err.message });
+//   }
+// };
 
-const logoutUser = async (req, res) => {
-  try {
-    res.clearCookie("connect.sid"); // Name of the session ID cookie
-    res.clearCookie("token"); // Name of the session ID cookie
-    res
-      .status(200)
-      .json({ status: true, message: "Successfully logged out user" });
-  } catch (error) {
-    console.log(error);
-  }
-};
+// const logoutUser = async (req, res) => {
+//   try {
+//     res.clearCookie("connect.sid"); // Name of the session ID cookie
+//     res.clearCookie("token"); // Name of the session ID cookie
+//     res
+//       .status(200)
+//       .json({ status: true, message: "Successfully logged out user" });
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
 
 module.exports = {
   insertuser,
@@ -885,6 +885,4 @@ module.exports = {
   changeUserStatus,
   addWalletUser,
   removeWalletUser,
-  loginUser,
-  logoutUser,
 };

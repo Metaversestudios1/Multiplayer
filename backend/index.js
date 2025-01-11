@@ -26,6 +26,7 @@ const LeadBoard = require("./Routes/LeadBoardRoutes");
 const Banner = require("./Routes/BannerRoutes");
 const Ledger = require("./Routes/LedgerRoute");
 const Notification = require("./Routes/NotificationRoute");
+const Game = require("./Routes/Games/GamesRoute");
 
 // Connect to the database
 connectDB();
@@ -94,6 +95,7 @@ app.use("/api", LeadBoard);
 app.use("/api", Banner);
 app.use("/api", Ledger);
 app.use("/api", Notification);
+app.use("/api", Game);
 
 // Root route
 app.get("/", (req, res) => {
