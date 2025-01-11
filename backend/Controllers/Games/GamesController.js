@@ -1,9 +1,10 @@
 const Game = require("../../Models/Games/Games");
 const GameSettings = require("../../Models/Games/GamesSettings");
+const AllGameSettings = require("../../Models/Games/AllGameSettings");
 
 const addGame = async (req, res) => {
   try {
-    console.log(req.body);
+    //console.log(req.body);
     const newGame = new Game(req.body);
     await newGame.save();
     res.status(201).json({ success: true });
@@ -70,7 +71,7 @@ const updateGame = async (req, res) => {
   try {
     const updatedata = req.body;
     const id = updatedata.id;
-    console.log("game update called");
+    //console.log("game update called");
     const result = await Game.updateOne(
       { _id: id },
       { $set: updatedata.oldData }
@@ -122,7 +123,7 @@ const deleteGame = async (req, res) => {
 const addOrUpdateSettings = async (req, res) => {
   try {
     const { id, dynamicSettings } = req.body;
-    console.log(req.body);
+    //console.log(req.body);
     const gameId = id;
     const settings = dynamicSettings;
 
@@ -230,6 +231,106 @@ const updateGameSettings = async (req, res) => {
   }
 };
 
+const getAllGameSettings = async (req, res) => {
+  try {
+    const pageSize = parseInt(req.query.limit);
+    const page = parseInt(req.query.page);
+    const search = req.query.search;
+
+    // Construct the query
+    const query = {
+      "games.deleted_at": null, // Only games with a null `deleted_at` will be returned
+    };
+
+    // if (search) {
+    //   query["games.gameName"] = { $regex: search, $options: "i" }; // Case-insensitive search for gameName
+    // }
+
+    // Query the database for game settings with soft-deleted games excluded
+    const result = await AllGameSettings.find(query)
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * pageSize)
+      .limit(pageSize);
+    console.log("all game settings:", result);
+    const count = await AllGameSettings.find(query).countDocuments();
+
+    res.status(200).json({ success: true, result, count });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Error getting game details",
+    });
+  }
+};
+
+const AddAllGameSettings = async (req, res) => {
+  try {
+    const { gameName, status, config } = req.body; // Directly receive 'config'
+
+    const newGame = {
+      gameName,
+      status: parseInt(status),
+      config,
+    };
+
+    //console.log("Config value:", newGame);
+
+    const result = await AllGameSettings.updateOne(
+      {},
+      { $push: { games: newGame } },
+      { upsert: true }
+    );
+
+    res.status(201).json({ success: true });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Error geting game details",
+    });
+  }
+};
+
+const DeleteAllGameSettings = async (req, res) => {
+  try {
+    const { settingId, gameIndex } = req.body; // `settingId` is the ID of the record, `gameIndex` is the index of the game in the array
+
+    // Find the game setting document by its ID
+    const gameSetting = await AllGameSettings.findOne({ _id: settingId });
+
+    if (!gameSetting) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Game setting not found" });
+    }
+
+    // Check if the gameIndex is valid
+    if (gameIndex < 0 || gameIndex >= gameSetting.games.length) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid game index" });
+    }
+
+    // Update the deleted_at field for the game at the provided index
+    gameSetting.games[gameIndex].deleted_at = new Date(); // Set the current date as the soft delete timestamp
+
+    // Save the updated document
+    await gameSetting.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Game soft deleted successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Error geting game details",
+    });
+  }
+};
+
 module.exports = {
   addGame,
   getAllGames,
@@ -240,4 +341,7 @@ module.exports = {
   getAllGame,
   getSingleSettings,
   updateGameSettings,
+  getAllGameSettings,
+  AddAllGameSettings,
+  DeleteAllGameSettings,
 };

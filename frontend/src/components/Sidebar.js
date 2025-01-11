@@ -21,26 +21,26 @@ const Sidebar = ({ sidebar, toggleSideBar }) => {
   };
 
   useEffect(() => {
-    fetchAllGame();
+    // fetchAllGame();
   }, []);
 
-  const fetchAllGame = async () => {
-    const res = await fetch(
-      `${process.env.REACT_APP_BACKEND_URL}/api/getAllGame`,
-      {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-      }
-    );
-    const response = await res.json();
+  // const fetchAllGame = async () => {
+  //   const res = await fetch(
+  //     `${process.env.REACT_APP_BACKEND_URL}/api/getAllGame`,
+  //     {
+  //       method: "GET",
+  //       headers: { "Content-Type": "application/json" },
+  //     }
+  //   );
+  //   const response = await res.json();
 
-    setGames(response);
-  };
+  //   setGames(response);
+  // };
 
   // Handle dropdown selection
-  const handleGameSelect = (gameId) => {
-    navigate(`/game-settings/${gameId}`); // Use navigate() to go to the settings page
-  };
+  // const handleGameSelect = (gameId) => {
+  //   navigate(`/game-settings/${gameId}`); // Use navigate() to go to the settings page
+  // };
 
   return (
     <>
@@ -103,7 +103,7 @@ const Sidebar = ({ sidebar, toggleSideBar }) => {
                 onClick={toggleSideBar}
               >
                 <NavLink
-                  to="/games"
+                  to="/allgamesettings"
                   className={({ isActive }) =>
                     isActive
                       ? "flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white bg-[#0472ff] rounded-lg"
@@ -125,7 +125,7 @@ const Sidebar = ({ sidebar, toggleSideBar }) => {
                     <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
                     <polyline points="9 22 9 12 15 12 15 22" />
                   </svg>
-                  Games
+                  All Games
                 </NavLink>
               </li>
 
@@ -577,7 +577,7 @@ const Sidebar = ({ sidebar, toggleSideBar }) => {
                 </ul>
               )}
 
-              <div className="sidebar-dropdown">
+              {/* <div className="sidebar-dropdown">
                 <label htmlFor="game-dropdown">Select Game:</label>
                 <select
                   id="game-dropdown"
@@ -593,7 +593,7 @@ const Sidebar = ({ sidebar, toggleSideBar }) => {
                     </option>
                   ))}
                 </select>
-              </div>
+              </div> */}
             </ul>
           </nav>
         </div>

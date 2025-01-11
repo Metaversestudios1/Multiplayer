@@ -18,7 +18,7 @@ const Games = () => {
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    fetchWins();
+    //fetchWins();
   }, [page, search]);
 
   const fetchWins = async () => {
@@ -28,7 +28,7 @@ const Games = () => {
         `${process.env.REACT_APP_BACKEND_URL}/api/getallgames?page=${page}&limit=${pageSize}&search=${search}&transactionType=withdraw`
       );
       const response = await res.json();
-      console.log("all games:", response);
+      //console.log("all games:", response);
       if (response.success) {
         setWins(response.result);
         setNoData(response.result.length === 0);
@@ -149,9 +149,9 @@ const Games = () => {
         <div className="text-2xl font-bold mx-2 my-8 px-4">Games </div>
       </div>
       <div className="flex justify-between">
-        <NavLink to="/addgame">
+        <NavLink to="/allgamesettings">
           <button className="bg-blue-800 text-white p-3 m-5 text-sm rounded-lg">
-            Add New Game
+            All Game Settings
           </button>
         </NavLink>
         <input
