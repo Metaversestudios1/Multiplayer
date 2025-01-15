@@ -160,7 +160,7 @@ const AllGameSettings = () => {
                         className="bg-white border-b"
                       >
                         <th className="px-6 py-4 font-medium border-2">
-                          {startIndex + index + 1}
+                          {startIndex + gameIndex + 1}
                         </th>
                         <td className="px-6 py-4 font-medium border-2">
                           {game.gameName || "N/A"}

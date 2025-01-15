@@ -26,8 +26,8 @@ import Bankdetailskyc from "./components/KYCUser/bankdetailskyc";
 import Withdrawdashboard from "./components/withdraw/withdrawdashboard";
 import Aviatorhistory from "./components/Aviator/aviatorhistory";
 
-import UserAuthProvider from "./context/UserAuthContext"; //new context to store user auth status
-import UserProtectedRoute from "./components/utils/UserProtectedRoute";
+// import UserAuthProvider from "./context/UserAuthContext"; //new context to store user auth status
+// import UserProtectedRoute from "./components/utils/UserProtectedRoute";
 
 //new component added
 import AddUser from "./components/User/AddUser";
@@ -41,14 +41,14 @@ import RemoveWallet from "./components/User/RemoveWallet";
 import Ledger from "./components/User/Ledger";
 import Notification from "./components/setting/notification/Notification";
 import AddNotification from "./components/setting/notification/AddNotification";
-import LoginUser from "./components/LoginUser";
+//import LoginUser from "./components/LoginUser";
 //import LogoutUser from "./components/LogoutUser";
 import Leadboard from "./components/leadboard/Leadboard";
-import Games from "./components/Games/Games";
-import AddGame from "./components/Games/AddGame";
-import EditGame from "./components/Games/EditGame";
-import AddOrEditGameSettings from "./components/Games/AddOrEditGameSettings";
-import SingleGameSettings from "./components/Games/SingleGameSettings";
+//import Games from "./components/Games/Games";
+//import AddGame from "./components/Games/AddGame";
+//import EditGame from "./components/Games/EditGame";
+//import AddOrEditGameSettings from "./components/Games/AddOrEditGameSettings";
+//import SingleGameSettings from "./components/Games/SingleGameSettings";
 import AllGameSettings from "./components/Games/AllGameSettings";
 import AddAllGameSettings from "./components/Games/AddAllGameSettings";
 
@@ -791,9 +791,7 @@ function App() {
 
   return (
     <AuthProvider>
-      <UserAuthProvider>
         <RouterProvider router={router} />
-      </UserAuthProvider>
     </AuthProvider>
   );
 }

@@ -13,6 +13,20 @@ const AddAllGameSettings = () => {
   const [data, setData] = useState({
     gameName: "",
     status: "1",
+    minPlayers:1,
+    maxPlayers:1,
+    initialBonus:0,
+    // withdrawalFee:0,
+    // minBetAmount:0,
+    // minRecahrge:0,
+    // minWithdraw:0,
+    // startGameRangeTimer:0,
+    // endGameRangeTimer:0,
+    releaseDate:"",
+    features:"",
+    version:"1.0.0"
+
+
   });
 
   const handleChange = (e) => {
@@ -110,7 +124,212 @@ const AddAllGameSettings = () => {
                 required
               />
             </div>
-
+            <div className="my-2">
+              <label
+                htmlFor="minPlayers"
+                className="block mb-2 text-lg font-medium"
+              >
+                Min Players<span className="text-red-900 text-lg">&#x2a;</span>
+              </label>
+              <input
+                name="minPlayers"
+                value={data.minPlayers}
+                onChange={handleChange}
+                type="text"
+                className="bg-gray-200 border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                placeholder="Enter min players"
+                required
+              />
+            </div>
+            <div className="my-2">
+              <label
+                htmlFor="minPlayers"
+                className="block mb-2 text-lg font-medium"
+              >
+                Max Players<span className="text-red-900 text-lg">&#x2a;</span>
+              </label>
+              <input
+                name="maxPlayers"
+                value={data.maxPlayers}
+                onChange={handleChange}
+                type="text"
+                className="bg-gray-200 border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                placeholder="Enter max players"
+                required
+              />
+            </div>
+           
+            <div className="my-2">
+              <label
+                htmlFor="initialBonus"
+                className="block mb-2 text-lg font-medium"
+              >
+                Intial Bonus<span className="text-red-900 text-lg">&#x2a;</span>
+              </label>
+              <input
+                name="initialBonus"
+                value={data.initialBonus}
+                onChange={handleChange}
+                type="text"
+                className="bg-gray-200 border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                placeholder="Enter initial bonus"
+                required
+              />
+            </div>
+            <div className="my-2">
+              <label
+                htmlFor="withdrawalFee"
+                className="block mb-2 text-lg font-medium"
+              >
+                Withdrawal Fee
+              </label>
+              <input
+                name="withdrawalFee"
+                value={data.withdrawalFee}
+                onChange={handleChange}
+                type="text"
+                className="bg-gray-200 border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                placeholder="Enter withdrawl fee"
+               
+              />
+            </div>
+            <div className="my-2">
+              <label
+                htmlFor="minBetAmount"
+                className="block mb-2 text-lg font-medium"
+              >
+                Min BetAmount
+              </label>
+              <input
+                name="minBetAmount"
+                value={data.minBetAmount}
+                onChange={handleChange}
+                type="text"
+                className="bg-gray-200 border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                placeholder="Enter minimum bet amount"
+               
+              />
+            </div>
+            <div className="my-2">
+              <label
+                htmlFor="minRecahrge"
+                className="block mb-2 text-lg font-medium"
+              >
+                Min Recahrge
+              </label>
+              <input
+                name="minRecahrge"
+                value={data.minRecahrge}
+                onChange={handleChange}
+                type="text"
+                className="bg-gray-200 border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                placeholder="Enter minimum recharge amount"
+                
+              />
+            </div>
+            <div className="my-2">
+              <label
+                htmlFor="minWithdraw"
+                className="block mb-2 text-lg font-medium"
+              >
+               MinWithdraw
+              </label>
+              <input
+                name="minWithdraw"
+                value={data.minWithdraw}
+                onChange={handleChange}
+                type="text"
+                className="bg-gray-200 border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                placeholder="Enter minimum recharge amount"
+                
+              />
+            </div>
+            <div className="my-2">
+              <label
+                htmlFor="startGameRangeTimer"
+                className="block mb-2 text-lg font-medium"
+              >
+                Start GameRange Timer
+              </label>
+              <input
+                name="startGameRangeTimer"
+                value={data.startGameRangeTimer}
+                onChange={handleChange}
+                type="text"
+                className="bg-gray-200 border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                placeholder="Enter start game range"
+               
+              />
+            </div>
+            <div className="my-2">
+              <label
+                htmlFor="endGameRangeTimer"
+                className="block mb-2 text-lg font-medium"
+              >
+                End GameRange Timer
+              </label>
+              <input
+                name="endGameRangeTimer"
+                value={data.endGameRangeTimer}
+                onChange={handleChange}
+                type="text"
+                className="bg-gray-200 border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                placeholder="Enter end game range"
+               
+              />
+            </div>
+            <div className="my-2">
+              <label
+                htmlFor="releaseDate"
+                className="block mb-2 text-lg font-medium"
+              >
+               Release Date
+              </label>
+              <input
+                name="releaseDate"
+                value={data.releaseDate}
+                onChange={handleChange}
+                type="date"
+                className="bg-gray-200 border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                placeholder="Enter end game range"
+               
+              />
+            </div>
+            <div className="my-2">
+              <label
+                htmlFor="releaseDate"
+                className="block mb-2 text-lg font-medium"
+              >
+               Features
+              </label>
+              <input
+                name="features"
+                value={data.features}
+                onChange={handleChange}
+                type="text"
+                className="bg-gray-200 border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                placeholder="Enter end game features"
+               
+              />
+            </div>
+            <div className="my-2">
+              <label
+                htmlFor="version"
+                className="block mb-2 text-lg font-medium"
+              >
+               Version<span className="text-red-900 text-lg">&#x2a;</span>
+              </label>
+              <input
+                name="version"
+                value={data.version}
+                onChange={handleChange}
+                type="text"
+                className="bg-gray-200 border border-gray-300 text-gray-900 rounded-lg block w-full p-2.5"
+                placeholder="Enter end game version"
+                required
+              />
+            </div>
+            
             <div className="my-2">
               <label
                 htmlFor="status"
