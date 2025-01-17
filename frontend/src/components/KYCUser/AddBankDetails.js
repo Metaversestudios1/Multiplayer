@@ -222,7 +222,7 @@ const AddBankDetails = () => {
               <option value="">Select Username</option>
               {users.map((user) => (
                 <option key={user._id} value={user._id}>
-                  {user.username} (ID: {user._id})
+                  {user.username} 
                 </option>
               ))}
             </select>
