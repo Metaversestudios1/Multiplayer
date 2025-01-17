@@ -250,6 +250,13 @@ const Bankdetailskyc = () => {
           </div>
         </div>
       )}
+
+      <NavLink to="/addbankdetails">
+                <button className="bg-blue-800 text-white p-3 m-5 text-sm rounded-lg">
+                  Add New Bank Details
+                </button>
+              </NavLink>
+
       <div className="relative overflow-x-auto m-5 mb-0">
         {users.length > 0 && (
           <table className="w-full text-sm text-left rtl:text-right border-2 border-gray-300">
@@ -274,7 +281,7 @@ const Bankdetailskyc = () => {
                   Account Holder Name
                 </th>
                 <th scope="col" className="px-6 py-3 border-2 border-gray-300">
-                  Ifsc Code
+                  IFSC Code
                 </th>
                 <th scope="col" className="px-6 py-3 border-2 border-gray-300">
                   Mobile Number 
@@ -282,7 +289,9 @@ const Bankdetailskyc = () => {
                 <th scope="col" className="px-6 py-3 border-2 border-gray-300">
                   UPI ID 
                 </th>
-
+                <th scope="col" className="px-6 py-3 border-2 border-gray-300">
+                  PAN Number
+                </th>
                        <th scope="col" className="px-6 py-3 border-2 border-gray-300">
                   Status                  
                        </th>
@@ -329,10 +338,13 @@ const Bankdetailskyc = () => {
                   <td className="px-6 py-4 border-2 border-gray-300">
                     {item?.upiId}
                   </td>
+                  <td className="px-6 py-4 border-2 border-gray-300">
+                    {item?.panNo}
+                  </td>
                   <td className="px-6 py-4 font-medium border-2">
                   <div
                         className=" hover:bg-blue-600  font-bold py-2 px-4 rounded"
-                      >{item?.kycstatus }</div>                   
+                      >{item?.KYCStatus }</div>                   
                   </td>              
                  
                 </tr>

@@ -51,6 +51,7 @@ import Leadboard from "./components/leadboard/Leadboard";
 //import SingleGameSettings from "./components/Games/SingleGameSettings";
 import AllGameSettings from "./components/Games/AllGameSettings";
 import AddAllGameSettings from "./components/Games/AddAllGameSettings";
+import AddBankDetails from "./components/KYCUser/AddBankDetails";
 
 function App() {
   const [sideBar, setSideBar] = useState(true);
@@ -777,6 +778,24 @@ function App() {
             <div className="flex flex-col flex-grow overflow-y-auto flex-[3]">
               <Navbar toggleSideBar={toggleSideBar} />
               <AddAllGameSettings />
+            </div>
+          </div>
+        </PrivateRoute>
+      ),
+    },
+    {
+      path: "/addbankdetails",
+      element: (
+        <PrivateRoute>
+          <div className="flex h-screen">
+            <Sidebar
+              sidebar={sideBar}
+              className="flex-1"
+              toggleSideBar={toggleSideBar}
+            />
+            <div className="flex flex-col flex-grow overflow-y-auto flex-[3]">
+              <Navbar toggleSideBar={toggleSideBar} />
+              <AddBankDetails />
             </div>
           </div>
         </PrivateRoute>

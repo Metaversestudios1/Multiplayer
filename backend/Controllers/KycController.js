@@ -2,11 +2,53 @@ const UserBank = require("../Models/UserBankDetails");
 const bcrypt = require("bcrypt");
 const Transaction = require("../Models/Transaction");
 
+// const insertUserBank = async (req, res) => {
+//   try {
+//     const newUserBank = new UserBank(req.body);
+//     await newUserBank.save();
+//     res.status(201).json({ success: true });
+//   } catch (err) {
+//     res.status(500).json({
+//       success: false,
+//       message: "Error inserting User Bank details",
+//       error: err.message,
+//     });
+//   }
+// };
+
 const insertUserBank = async (req, res) => {
   try {
-    const newUserBank = new UserBank(req.body);
+    console.log("user bank details:",req.body);
+    const { user_id, bankname, accountno, account_holder_name, ifsc, mobile_no, upi_id, aadharno, pan_no } = req.body;
+
+     // Validate required fields
+    //  if (!user_id || !bankname || !accountno || !account_holder_name || !ifsc|| !mobile_no || !pan_no) {
+    //   return res.status(400).json({ message: "Missing required fields" });
+    // }
+    
+    const existingUserBank = await UserBank.findOne({ user_id });
+    if (existingUserBank) {
+      return res.status(400).json({ message: "User bank details already exist" });
+    }
+
+    // Create new user bank details
+    const newUserBank = new UserBank({
+      user_id,
+      bankName:bankname,
+      accountNo:accountno,
+      accountholdername:account_holder_name,
+      ifscCode:ifsc,
+      mobileNo:mobile_no,
+      upiId: upi_id || "", // Default empty if not provided
+      aadharNo:aadharno,
+      panNo:pan_no,
+    });
+
     await newUserBank.save();
-    res.status(201).json({ success: true });
+    res.status(201).json({ message: "User bank details added successfully",  success: true  });
+    // const newUserBank = new UserBank(req.body);
+    // await newUserBank.save();
+    // res.status(201).json({ success: true });
   } catch (err) {
     res.status(500).json({
       success: false,
@@ -60,6 +102,7 @@ const getAllUserBank = async (req, res) => {
       .skip((page - 1) * pageSize)
       .limit(pageSize);
     const count = await UserBank.find(query).countDocuments();
+    
     res.status(200).json({ success: true, result, count });
   } catch (error) {
     res
@@ -127,10 +170,15 @@ const updatekycstatus = async (req, res) => {
   try {
     const { id } = req.params;
     const status = req.body.status;
-    console.log(status);
+    // console.log("KYC Controller:",status);
+    // console.log("KYC Controller id:",id);
     const UserBanknew = await UserBank.findById(id);
-    UserBanknew.kycstatus = status;
+    if (!UserBanknew) {
+      return res.status(404).json({ success: false, message: "UserBank not found" });
+    }
+    UserBanknew.KYCStatus = status; 
     await UserBanknew.save();
+  
     res.status(200).json({ success: true });
   } catch (err) {
     res.status(500).json({

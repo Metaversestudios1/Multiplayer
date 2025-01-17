@@ -59,8 +59,16 @@ const User = () => {
     }
     const res = await fetch(apiUrl);
     const response = await res.json();
+    //console.log("kyclist response:",response.result)
     if (response.success) {
       setNoData(false);
+
+      // If fetching a single document, ensure count is set to 1
+        if (id) {
+            setCount(1);
+        } else {
+            setCount(response.count);
+        }
       //console.log("Bank details", response.result);
       if (response.result.length === 0) {
         setNoData(true);
@@ -81,7 +89,7 @@ const User = () => {
       } catch (error) {
         console.error("Error fetching usernames:", error);
       }
-      setCount(response.count);
+      //setCount(response.count);
       setLoader(false);
     }
   };
@@ -287,9 +295,9 @@ const User = () => {
                 <th scope="col" className="px-6 py-3 border-2 border-gray-300">
                   Status
                 </th>
-                {/* <th scope="col" className="px-6 py-3 border-2 border-gray-300">
+                <th scope="col" className="px-6 py-3 border-2 border-gray-300">
                   Action
-                </th> */}
+                </th>
               </tr>
             </thead>
 
@@ -328,11 +336,11 @@ const User = () => {
                     {item?.createdAt?.split("T")[0]}
                   </td>
                   <td className="px-6 py-4 font-medium border-2">
-                    {item?.kycstatus === "pending" ? (
+                    {item?.KYCStatus === "pending" ? (
                       <div className=" hover:bg-blue-600  font-bold py-2 px-4 rounded">
                         Pending
                       </div>
-                    ) : item?.kycstatus === "approved" ? (
+                    ) : item?.KYCStatus === "approved" ? (
                       <div className=" hover:bg-green-600  font-bold py-2 px-4 rounded">
                         Approved
                       </div>
@@ -345,7 +353,7 @@ const User = () => {
                   </td>
                   <td className="px-6 py-4 font-medium border-2">
                     <div className="flex justify-between">
-                      {/* {item?.kycstatus === "pending" ? (
+                      {item?.KYCStatus === "pending" ? (
                         <div>
                           <button
                             className="bg-green-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded"
@@ -367,7 +375,7 @@ const User = () => {
                         </div>
                       ) : (
                         "-"
-                      )} */}
+                      )}
 
                       {/* <IoMdEye
                         className="text-xl text-blue-500 hover:scale-110 cursor-pointer"

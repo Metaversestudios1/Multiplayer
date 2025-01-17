@@ -16,7 +16,7 @@ const BankRoutes = require("./Routes/BankRoutes");
 const PlayerRoutes = require("./Routes/PlayerRoutes");
 const PaymentRoutes = require("./Routes/PaymentRoutes");
 const PlaneCrashRoutes = require("./Routes/PlaneCrashRoutes");
-const UserKycRoutes = require("./Routes/UserKycRoutes");
+const UserKycRoutes = require("./Routes/UserKycRoutes");//transaction
 const PromoCodeRoutes = require("./Routes/PromoCodeRoutes");
 
 const AviatorHistoryRoutes = require("./Routes/Aviator/AviatorHistoryRoutes");
@@ -27,6 +27,7 @@ const Banner = require("./Routes/BannerRoutes");
 const Ledger = require("./Routes/LedgerRoute");
 const Notification = require("./Routes/NotificationRoute");
 const Game = require("./Routes/Games/GamesRoute");
+
 
 // Connect to the database
 connectDB();
@@ -96,6 +97,7 @@ app.use("/api", Banner);
 app.use("/api", Ledger);
 app.use("/api", Notification);
 app.use("/api", Game);
+
 
 // Root route
 app.get("/", (req, res) => {
