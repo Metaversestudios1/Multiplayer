@@ -1,5 +1,6 @@
 
 const AllGameSettings = require("../../Models/Games/AllGameSettings");
+const TestGameData = require("../../Models/Games/TestGameData");
 
 
 const getAllGameSettings = async (req, res) => {
@@ -73,7 +74,7 @@ const AddAllGameSettings = async (req, res) => {
 
 const DeleteAllGameSettings = async (req, res) => {
   try {
-    const { game_id } = req.body; // `settingId` is the ID of the record, `gameIndex` is the index of the game in the array
+    const { game_id } = req.body; 
 
     if (!game_id) {
       return res.status(400).json({ success: false, message: "Game ID is required." });
@@ -97,6 +98,29 @@ const DeleteAllGameSettings = async (req, res) => {
     });
   }
 };
+
+
+// const createTestGameData = async () => {
+//   try {
+//     const newTestGameData = new TestGameData({
+//       gameId: new mongoose.Types.ObjectId("678b694dee2df8b2074e38dc"),
+//       userId: new mongoose.Types.ObjectId("677653e29f5c3672996dea01"),
+//       data: {
+//         score: 100,
+//         level: 5,
+//         achievements: ["first_win", "speed_runner"],
+//       },
+//     });
+
+//     await newTestGameData.save();
+//     console.log("Data inserted successfully:", newTestGameData);
+//   } catch (error) {
+//     console.error("Error inserting data:", error.message);
+//   }
+// };
+
+// // Call the function
+// createTestGameData();
 
 module.exports = {
   getAllGameSettings,
