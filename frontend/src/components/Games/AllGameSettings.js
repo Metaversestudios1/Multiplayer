@@ -28,11 +28,11 @@ const AllGameSettings = () => {
         `${process.env.REACT_APP_BACKEND_URL}/api/allgamesettings?page=${page}&limit=${pageSize}&search=${search}`
       );
       const response = await res.json();
-      //console.log("all game settings:", response.result[0]._id);
+     // console.log("all game settings:", response.result[0]._id);
       console.log("data:", response.result);
 
       if (response.success) {
-        setGameSettings(response.result || []); // Set the game settings from response
+        setGameSettings(response.result); // Set the game settings from response
         setNoData(response.result.length === 0); // Check if no game settings exist
         setCount(response.count);
       }
@@ -51,7 +51,7 @@ const AllGameSettings = () => {
     }
   };
 
-  const handleDelete = async (e, gameIndex, settingId) => {
+  const handleDelete = async (e, game_id) => {
     e.preventDefault();
     const permissionOfDelete = window.confirm(
       "Are you sure, you want to delete the game setting?"
@@ -66,7 +66,7 @@ const AllGameSettings = () => {
         {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ gameIndex, settingId }),
+          body: JSON.stringify({ game_id }),
         }
       );
       if (!res.ok) {
@@ -149,40 +149,30 @@ const AllGameSettings = () => {
               </tr>
             </thead>
             <tbody>
-              {gameSettings.map((item, index) => {
-                // Map through each game in the `games` array and create a row for each game
-                return item?.games?.map(
-                  (game, gameIndex) =>
-                    // Add a check to ensure that deleted_at is null
-                    game.deleted_at === null && (
-                      <tr
-                        key={`${item._id}-${game._id}`}
-                        className="bg-white border-b"
-                      >
-                        <th className="px-6 py-4 font-medium border-2">
-                          {startIndex + gameIndex + 1}
-                        </th>
-                        <td className="px-6 py-4 font-medium border-2">
-                          {game.gameName || "N/A"}
-                        </td>
-                        <td className="px-6 py-4 font-medium border-2">
-                          {game.status === 1 ? "Active" : "Inactive"}
-                        </td>
-                        <td className="px-6 py-4 font-medium border-2">
-                          <div className="flex justify-center gap-2">
-                            <MdDelete
-                              onClick={(e) =>
-                                handleDelete(e, gameIndex, gameSettings[0]._id)
-                              }
-                              className="text-2xl cursor-pointer text-red-900"
-                            />
-                          </div>
-                        </td>
-                      </tr>
-                    )
-                );
-              })}
-            </tbody>
+            {gameSettings.map((game, index) =>
+              game.deleted_at === null && (
+                <tr key={game._id} className="bg-white border-b">
+                  <th className="px-6 py-4 font-medium border-2">
+                    {startIndex + index + 1}
+                  </th>
+                  <td className="px-6 py-4 font-medium border-2">
+                    {game.gameName || "N/A"}
+                  </td>
+                  <td className="px-6 py-4 font-medium border-2">
+                    {game.status === 1 ? "Active" : "Inactive"}
+                  </td>
+                  <td className="px-6 py-4 font-medium border-2">
+                    <div className="flex justify-center gap-2">
+                      <MdDelete
+                        onClick={(e) => handleDelete(e,game._id)}
+                        className="text-2xl cursor-pointer text-red-900"
+                      />
+                    </div>
+                  </td>
+                </tr>
+              )
+            )}
+          </tbody>
           </table>
         )}
         {noData && (
