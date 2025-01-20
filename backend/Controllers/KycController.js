@@ -18,37 +18,48 @@ const Transaction = require("../Models/Transaction");
 
 const insertUserBank = async (req, res) => {
   try {
-    console.log("user bank details:",req.body);
-    const { user_id, bankname, accountno, account_holder_name, ifsc, mobile_no, upi_id, aadharno, pan_no } = req.body;
+    //console.log("user bank details:",req.body);
+    const {
+      user_id,
+      bankname,
+      accountno,
+      account_holder_name,
+      ifsc,
+      mobile_no,
+      upi_id,
+      aadharno,
+      pan_no,
+    } = req.body;
 
-     // Validate required fields
+    // Validate required fields
     //  if (!user_id || !bankname || !accountno || !account_holder_name || !ifsc|| !mobile_no || !pan_no) {
     //   return res.status(400).json({ message: "Missing required fields" });
     // }
-    
+
     const existingUserBank = await UserBank.findOne({ user_id });
     if (existingUserBank) {
-      return res.status(400).json({ message: "User bank details already exist" });
+      return res
+        .status(400)
+        .json({ message: "User bank details already exist" });
     }
 
     // Create new user bank details
     const newUserBank = new UserBank({
       user_id,
-      bankName:bankname,
-      accountNo:accountno,
-      accountholdername:account_holder_name,
-      ifscCode:ifsc,
-      mobileNo:mobile_no,
+      bankName: bankname,
+      accountNo: accountno,
+      accountholdername: account_holder_name,
+      ifscCode: ifsc,
+      mobileNo: mobile_no,
       upiId: upi_id || "", // Default empty if not provided
-      aadharNo:aadharno,
-      panNo:pan_no,
+      aadharNo: aadharno,
+      panNo: pan_no,
     });
 
     await newUserBank.save();
-    res.status(201).json({ message: "User bank details added successfully",  success: true  });
-    // const newUserBank = new UserBank(req.body);
-    // await newUserBank.save();
-    // res.status(201).json({ success: true });
+    res
+      .status(201)
+      .json({ message: "User bank details added successfully", success: true });
   } catch (err) {
     res.status(500).json({
       success: false,
@@ -102,7 +113,7 @@ const getAllUserBank = async (req, res) => {
       .skip((page - 1) * pageSize)
       .limit(pageSize);
     const count = await UserBank.find(query).countDocuments();
-    
+
     res.status(200).json({ success: true, result, count });
   } catch (error) {
     res
@@ -174,11 +185,13 @@ const updatekycstatus = async (req, res) => {
     // console.log("KYC Controller id:",id);
     const UserBanknew = await UserBank.findById(id);
     if (!UserBanknew) {
-      return res.status(404).json({ success: false, message: "UserBank not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "UserBank not found" });
     }
-    UserBanknew.KYCStatus = status; 
+    UserBanknew.KYCStatus = status;
     await UserBanknew.save();
-  
+
     res.status(200).json({ success: true });
   } catch (err) {
     res.status(500).json({
@@ -265,6 +278,62 @@ const getRejectedRecharge = async (req, res) => {
   }
 };
 
+const addRecahrgeHistory = async (req, res) => {
+  try {
+    //console.log(req.body);
+    const { user_id, paymentType, amount, status } = req.body;
+
+    const newRechargeData = new Transaction({
+      user_id,
+      paymentType,
+      amount,
+      status,
+      transactionType: "recharge",
+    });
+
+    await newRechargeData.save();
+
+    res
+      .status(201)
+      .json({ success: true, message: "Recharge data added successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "Server error. Please try again later.",
+      error: error.message,
+    });
+  }
+};
+
+const addWithdrawHistory = async (req, res) => {
+  try {
+    //console.log(req.body);
+    const { user_id, paymentType, amount, status } = req.body;
+
+    const newRechargeData = new Transaction({
+      user_id,
+      paymentType,
+      amount,
+      status,
+      transactionType: "withdraw",
+    });
+
+    await newRechargeData.save();
+
+    res
+      .status(201)
+      .json({ success: true, message: "Recharge data added successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "Server error. Please try again later.",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   insertUserBank,
   updateUserBank,
@@ -277,4 +346,6 @@ module.exports = {
   getApprovedRecharge,
   getRejectedWithdraw,
   getRejectedRecharge,
+  addRecahrgeHistory,
+  addWithdrawHistory,
 };

@@ -26,9 +26,6 @@ import Bankdetailskyc from "./components/KYCUser/bankdetailskyc";
 import Withdrawdashboard from "./components/withdraw/withdrawdashboard";
 import Aviatorhistory from "./components/Aviator/aviatorhistory";
 
-// import UserAuthProvider from "./context/UserAuthContext"; //new context to store user auth status
-// import UserProtectedRoute from "./components/utils/UserProtectedRoute";
-
 //new component added
 import AddUser from "./components/User/AddUser";
 import EditUser from "./components/User/EditUser";
@@ -48,6 +45,8 @@ import AddAllGameSettings from "./components/Games/AddAllGameSettings";
 import AddBankDetails from "./components/KYCUser/AddBankDetails";
 import LudoHistory from "./components/Games/LudoHistory";
 import AddLudoHistory from "./components/Games/AddLudoHistory";
+import AddRechargeHistory from "./components/setting/AddRechargeHistory";
+import AddWithdrawHistory from "./components/setting/AddWithdrawHistory";
 
 function App() {
   const [sideBar, setSideBar] = useState(true);
@@ -738,6 +737,44 @@ function App() {
             <div className="flex flex-col flex-grow overflow-y-auto flex-[3]">
               <Navbar toggleSideBar={toggleSideBar} />
               <AddLudoHistory />
+            </div>
+          </div>
+        </PrivateRoute>
+      ),
+    },
+
+    {
+      path: "/addrechargehistory",
+      element: (
+        <PrivateRoute>
+          <div className="flex h-screen">
+            <Sidebar
+              sidebar={sideBar}
+              className="flex-1"
+              toggleSideBar={toggleSideBar}
+            />
+            <div className="flex flex-col flex-grow overflow-y-auto flex-[3]">
+              <Navbar toggleSideBar={toggleSideBar} />
+              <AddRechargeHistory />
+            </div>
+          </div>
+        </PrivateRoute>
+      ),
+    },
+
+    {
+      path: "/addwithdrawhistory",
+      element: (
+        <PrivateRoute>
+          <div className="flex h-screen">
+            <Sidebar
+              sidebar={sideBar}
+              className="flex-1"
+              toggleSideBar={toggleSideBar}
+            />
+            <div className="flex flex-col flex-grow overflow-y-auto flex-[3]">
+              <Navbar toggleSideBar={toggleSideBar} />
+              <AddWithdrawHistory />
             </div>
           </div>
         </PrivateRoute>

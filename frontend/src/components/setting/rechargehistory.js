@@ -153,6 +153,11 @@ const Payment = () => {
         </div>
       </div>
       <div className="flex justify-between">
+        <NavLink to="/addrechargehistory">
+          <button className="bg-blue-800 text-white p-3 m-5 text-sm rounded-lg">
+            Add New
+          </button>
+        </NavLink>
         <input
           placeholder="Search "
           type="text"

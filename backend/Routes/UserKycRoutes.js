@@ -10,6 +10,8 @@ const {
   getApprovedRecharge,
   getRejectedWithdraw,
   getRejectedRecharge,
+  addRecahrgeHistory,
+  addWithdrawHistory,
 } = require("../Controllers/KycController");
 const express = require("express");
 const router = express.Router();
@@ -27,6 +29,7 @@ router.get("/getapprovedrecharge", getApprovedRecharge);
 router.get("/getrejectedwithdraw", getRejectedWithdraw);
 router.get("/getrejectedrecharge", getRejectedRecharge);
 
-
+router.post("/addrecahrgehistory", addRecahrgeHistory);
+router.post("/addwithdrawhistory", addWithdrawHistory);
 
 module.exports = router;
