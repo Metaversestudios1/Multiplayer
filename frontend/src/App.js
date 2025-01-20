@@ -41,17 +41,13 @@ import RemoveWallet from "./components/User/RemoveWallet";
 import Ledger from "./components/User/Ledger";
 import Notification from "./components/setting/notification/Notification";
 import AddNotification from "./components/setting/notification/AddNotification";
-//import LoginUser from "./components/LoginUser";
-//import LogoutUser from "./components/LogoutUser";
+
 import Leadboard from "./components/leadboard/Leadboard";
-//import Games from "./components/Games/Games";
-//import AddGame from "./components/Games/AddGame";
-//import EditGame from "./components/Games/EditGame";
-//import AddOrEditGameSettings from "./components/Games/AddOrEditGameSettings";
-//import SingleGameSettings from "./components/Games/SingleGameSettings";
 import AllGameSettings from "./components/Games/AllGameSettings";
 import AddAllGameSettings from "./components/Games/AddAllGameSettings";
 import AddBankDetails from "./components/KYCUser/AddBankDetails";
+import LudoHistory from "./components/Games/LudoHistory";
+import AddLudoHistory from "./components/Games/AddLudoHistory";
 
 function App() {
   const [sideBar, setSideBar] = useState(true);
@@ -654,7 +650,6 @@ function App() {
         </PrivateRoute>
       ),
     },
-    
 
     {
       path: "/allgamesettings",
@@ -712,6 +707,44 @@ function App() {
     },
 
     {
+      path: "/ludohistory",
+      element: (
+        <PrivateRoute>
+          <div className="flex h-screen">
+            <Sidebar
+              sidebar={sideBar}
+              className="flex-1"
+              toggleSideBar={toggleSideBar}
+            />
+            <div className="flex flex-col flex-grow overflow-y-auto flex-[3]">
+              <Navbar toggleSideBar={toggleSideBar} />
+              <LudoHistory />
+            </div>
+          </div>
+        </PrivateRoute>
+      ),
+    },
+
+    {
+      path: "/addludohistory",
+      element: (
+        <PrivateRoute>
+          <div className="flex h-screen">
+            <Sidebar
+              sidebar={sideBar}
+              className="flex-1"
+              toggleSideBar={toggleSideBar}
+            />
+            <div className="flex flex-col flex-grow overflow-y-auto flex-[3]">
+              <Navbar toggleSideBar={toggleSideBar} />
+              <AddLudoHistory />
+            </div>
+          </div>
+        </PrivateRoute>
+      ),
+    },
+
+    {
       path: "*",
       element: <Error />,
     },
@@ -719,7 +752,7 @@ function App() {
 
   return (
     <AuthProvider>
-        <RouterProvider router={router} />
+      <RouterProvider router={router} />
     </AuthProvider>
   );
 }
