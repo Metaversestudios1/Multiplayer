@@ -29,13 +29,11 @@ const createmanualpayment = async (req, res) => {
     await transaction.save();
     res.status(201).json({ success: true });
   } catch (err) {
-    res
-      .status(500)
-      .json({
-        success: false,
-        message: "error creating manual payment",
-        error: err.message,
-      });
+    res.status(500).json({
+      success: false,
+      message: "error creating manual payment",
+      error: err.message,
+    });
   }
 };
 
@@ -51,13 +49,11 @@ const updatemanualpayment = async (req, res) => {
     payment.status = status;
     await payment.save();
   } catch (err) {
-    res
-      .status(500)
-      .json({
-        success: false,
-        message: "error updating manual payment",
-        error: err.message,
-      });
+    res.status(500).json({
+      success: false,
+      message: "error updating manual payment",
+      error: err.message,
+    });
   }
 };
 
@@ -165,13 +161,11 @@ const getpayment = async (req, res) => {
     const count = await Transaction.find(query).countDocuments();
     res.status(200).json({ success: true, result, count });
   } catch (error) {
-    res
-      .status(500)
-      .json({
-        success: false,
-        message: "error fetching transaction",
-        error: error.message,
-      });
+    res.status(500).json({
+      success: false,
+      message: "error fetching transaction",
+      error: error.message,
+    });
   }
 };
 
@@ -182,7 +176,7 @@ const updatetransaction = async (req, res) => {
     const transaction = await Transaction.findById(id);
     transaction.status = status;
     await transaction.save();
-    console.log(req.body.type);
+    //console.log(req.body.type);
     if (req.body.type === "recharge") {
       if (req.body.status === "approved") {
         const user = await User.findById(transaction.user_id);
@@ -199,13 +193,11 @@ const updatetransaction = async (req, res) => {
 
     res.status(200).json({ success: true });
   } catch (err) {
-    res
-      .status(500)
-      .json({
-        success: false,
-        message: "error fetching transaction",
-        error: err.message,
-      });
+    res.status(500).json({
+      success: false,
+      message: "error fetching transaction",
+      error: err.message,
+    });
   }
 };
 

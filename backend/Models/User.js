@@ -56,6 +56,19 @@ const UserSchema = new mongoose.Schema(
     },
     coins: { type: Number, default: 0 }, // New: In-game currency
     bonus: { type: Number, default: 0 }, // New: Promotional credits
+    avatar: {
+      publicId: { type: String },
+      url: { type: String },
+      originalname: { type: String },
+      mimetype: { type: String },
+    },
+    bio: { type: String, maxlength: 500 },
+    stats: {
+      gamesPlayed: { type: Number, default: 0 },
+      wins: { type: Number, default: 0 },
+      losses: { type: Number, default: 0 },
+      highestWin: { type: Number, default: 0 },
+    },
   },
   { timestamps: true, collection: "user" }
 );

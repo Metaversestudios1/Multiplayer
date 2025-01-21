@@ -293,6 +293,9 @@ const User = () => {
                   Created At
                 </th>
                 <th scope="col" className="px-6 py-3 border-2 border-gray-300">
+                  Avatar
+                </th>
+                <th scope="col" className="px-6 py-3 border-2 border-gray-300">
                   Action
                 </th>
               </tr>
@@ -352,6 +355,18 @@ const User = () => {
                   <td className="px-6 py-4 border-2 border-gray-300">
                     {item?.createdAt?.split("T")[0]}
                   </td>
+                  <td className="px-6 py-4 border-2 border-gray-300">
+                    {item?.avatar ? (
+                      <img
+                        src={item.avatar.url}
+                        alt="Avatar"
+                        className="w-10 h-10 rounded-full"
+                      />
+                    ) : (
+                      <span className="text-gray-500">No Avatar</span>
+                    )}
+                  </td>
+
                   <td className=" py-5 pl-5 gap-1 border-2  border-gray-300">
                     <div className="flex items-center">
                       <NavLink to={`/edituser/${item?._id}`}>

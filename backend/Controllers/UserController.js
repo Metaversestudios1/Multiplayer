@@ -7,6 +7,51 @@ const twilio = require("twilio");
 const Promocode = require("../Models/User");
 const Ledger = require("../Models/Ledger");
 const AviatorSetting = require("../Models/Setting");
+const path = require("path");
+
+const cloudinary = require("cloudinary").v2;
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+const uploadImage = (buffer, originalname, mimetype) => {
+  return new Promise((resolve, reject) => {
+    if (!mimetype || typeof mimetype !== "string") {
+      return reject(new Error("MIME type is required and must be a string"));
+    }
+
+    if (!mimetype.startsWith("image")) {
+      return reject(new Error("Only image files are allowed"));
+    }
+
+    const fileExtension = path.extname(originalname);
+    const fileNameWithoutExtension = path.basename(originalname, fileExtension);
+    const publicId = `${fileNameWithoutExtension}${fileExtension}`; // Include extension in public_id
+
+    const options = {
+      resource_type: "image", // Explicitly set the resource type to image
+      public_id: publicId, // Set the public_id with extension
+      use_filename: true,
+      unique_filename: false,
+      overwrite: true,
+    };
+
+    cloudinary.uploader.upload(
+      `data:${mimetype};base64,${buffer.toString("base64")}`,
+      options,
+      (error, result) => {
+        if (error) {
+          console.error("Cloudinary upload error:", error);
+          return reject(new Error("Cloudinary upload failed"));
+        }
+        console.log("Cloudinary upload result:", result);
+        resolve(result);
+      }
+    );
+  });
+};
 
 const sendmailsms = async (req, res) => {
   const { email, contact } = req.body;
@@ -225,27 +270,6 @@ const insertuser = async (req, res) => {
         .slice(0, 4)
         .toUpperCase()}`; // Adjust as necessary
 
-      //await existingUser.save(); // Save updated user record
-      //console.log("promocode", existingUser.promocode);
-      // Check Aviator settings for initial bonus
-      //const aviatorSettings = await AviatorSetting.findOne();
-      // if (aviatorSettings && aviatorSettings.initialBonus) {
-      //   const bonus = aviatorSettings.initialBonus;
-      //   existingUser.balance = (existingUser.balance || 0) + bonus; // Update balance
-
-      //   if (aviatorSettings.initialBonus > 0) {
-      //     // Create ledger entry for the bonus
-      //     const ledgerEntry = new Ledger({
-      //       source: "Initial Bonus",
-      //       user_id: existingUser._id,
-      //       balance: existingUser.balance,
-      //       amount: bonus,
-      //     });
-
-      //     await ledgerEntry.save();
-      //   }
-      // }
-      // Save updated user record
       await existingUser.save();
       return res
         .status(200)
@@ -296,6 +320,7 @@ const updateuser = async (req, res) => {
         .status(404)
         .json({ success: false, message: "User not found" });
     }
+    //console.log(user);
 
     // Ensure the previous coins value is a number, default to 0 if it's non-existent or a string
     let previousBalance = user.balance;
@@ -309,25 +334,61 @@ const updateuser = async (req, res) => {
     } else {
       previousBalance = Number(previousBalance);
     }
-
+    // console.log("old data bonus", updatedata.bonus);
     // Default bonus to 0 if not provided
-    const bonus = updatedata.oldData.bonus
-      ? Number(updatedata.oldData.bonus)
-      : 0;
+    const bonus = updatedata.bonus ? Number(updatedata.bonus) : 0;
 
     // Calculate the new balance value
-    updatedata.oldData.balance = previousBalance + bonus;
-
-    // Update the user's data (including balance if necessary)
-    const result = await User.updateOne(
-      { _id: id },
-      {
-        $set: {
-          ...updatedata.oldData, // Ensure other fields are updated as well
-          balance: updatedata.oldData.balance, // Ensure the balance field is updated
-        },
+    updatedata.balance = previousBalance + bonus;
+    //console.log("file data:", req.file);
+    let imageData = null;
+    if (req.file) {
+      const { originalname, buffer, mimetype } = req.file;
+      if (!mimetype || typeof mimetype !== "string") {
+        console.error("Invalid MIME type:", mimetype);
+        return res
+          .status(400)
+          .json({ success: false, message: "Invalid MIME type" });
       }
-    );
+
+      const uploadResult = await uploadImage(buffer, originalname, mimetype);
+      if (!uploadResult) {
+        return res
+          .status(500)
+          .json({ success: false, message: "File upload error" });
+      }
+      imageData = {
+        publicId: uploadResult.public_id,
+        url: uploadResult.secure_url,
+        originalname,
+        mimetype,
+      };
+    }
+
+    //console.log("iamge data:", imageData);
+    let result;
+    if (imageData) {
+      result = await User.updateOne(
+        { _id: id },
+        {
+          $set: {
+            ...updatedata,
+            balance: updatedata.balance,
+            avatar: imageData,
+          },
+        }
+      );
+    } else {
+      result = await User.updateOne(
+        { _id: id },
+        {
+          $set: {
+            ...updatedata,
+            balance: updatedata.balance,
+          },
+        }
+      );
+    }
 
     // Check if the update actually modified the document
     if (result.modifiedCount === 0) {
@@ -337,12 +398,12 @@ const updateuser = async (req, res) => {
       });
     }
 
-    if (req.body.oldData.bonus > 0) {
+    if (req.body.bonus > 0) {
       // Create the ledger entry for the transaction
       const ledgerEntry = new Ledger({
         source: "admin add", // or "admin deduct"
         user_id: id,
-        balance: updatedata.oldData.balance,
+        balance: updatedata.balance,
         amount: bonus,
       });
 
@@ -351,6 +412,7 @@ const updateuser = async (req, res) => {
 
     res.status(201).json({ success: true, result: result });
   } catch (err) {
+    console.log(err);
     res.status(500).json({
       success: false,
       message: "Error in updating the user",

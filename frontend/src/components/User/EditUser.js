@@ -12,6 +12,7 @@ const EditUser = () => {
   const { id } = params;
   const [loader, setLoader] = useState(false);
   const [error, setError] = useState("");
+  const [avatar, setAvatar] = useState(null);
   const navigate = useNavigate();
   const initialState = {
     username: "",
@@ -22,10 +23,12 @@ const EditUser = () => {
     balance: "",
     bonus: "",
   };
+
   const [oldData, setOldData] = useState(initialState);
   useEffect(() => {
     fetchOldData();
   }, []);
+
   const fetchOldData = async () => {
     const res = await fetch(
       `${process.env.REACT_APP_BACKEND_URL}/api/getSingleuser`,
@@ -47,6 +50,7 @@ const EditUser = () => {
         promocode: response.result.promocode,
         balance: response.result.balance,
         bonus: response.result.bonus,
+        bio: response.result.bio,
       });
     }
   };
@@ -104,9 +108,18 @@ const EditUser = () => {
     return $("#winsForm").valid();
   };
 
+  // const handleChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setOldData?.({ ...oldData, [name]: value });
+  // };
+
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setOldData?.({ ...oldData, [name]: value });
+    const { name, value, type, files } = e.target;
+    if (type === "file") {
+      setAvatar(files[0]);
+    } else {
+      setOldData({ ...oldData, [name]: value });
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -117,13 +130,26 @@ const EditUser = () => {
 
     try {
       setLoader(true);
-      const updatedata = { oldData, id };
+      const formData = new FormData();
+      formData.append("id", id);
+      formData.append("username", oldData.username);
+      formData.append("password", oldData.password);
+      formData.append("contact", oldData.contact);
+      formData.append("email", oldData.email);
+      formData.append("promocode", oldData.promocode);
+      formData.append("balance", oldData.balance);
+      formData.append("bonus", oldData.bonus);
+      formData.append("bio", oldData.bio);
+      if (avatar) {
+        formData.append("avatar", avatar);
+      }
+      console.log(formData);
+      // const updatedata = { oldData, id };
       const res = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/api/updateuser`,
         {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(updatedata),
+          body: formData,
         }
       );
       const response = await res.json();
@@ -303,6 +329,41 @@ const EditUser = () => {
                 <option value="30">30</option>
                 <option value="40">40</option>
               </select>
+            </div>
+
+            <div className=" my-2">
+              <label
+                htmlFor="bio"
+                className="block mb-2 text-lg font-medium text-gray-900 dark:text-black"
+              >
+                Bio
+              </label>
+              <textarea
+                name="bio"
+                value={oldData.bio || ""}
+                onChange={handleChange}
+                id="bio"
+                aria-label="User bio"
+                className="bg-gray-200 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-black block w-full p-2.5"
+                placeholder="Please enter bio"
+              />
+            </div>
+
+            <div className="my-2">
+              <label
+                htmlFor="avatar"
+                className="block mb-2 text-lg font-medium text-gray-900 dark:text-black"
+              >
+                Avatar
+              </label>
+              <input
+                type="file"
+                name="avatar"
+                id="avatar"
+                accept="image/*"
+                onChange={handleChange}
+                className="bg-gray-200 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-black block w-full p-2.5"
+              />
             </div>
 
             {error && <p className="text-red-900  text-[17px] mb-5">{error}</p>}
