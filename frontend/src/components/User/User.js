@@ -293,7 +293,18 @@ const User = () => {
                   Created At
                 </th>
                 <th scope="col" className="px-6 py-3 border-2 border-gray-300">
+                  Bio
+                </th>
+                <th scope="col" className="px-6 py-3 border-2 border-gray-300">
                   Avatar
+                </th>
+                <th className="px-6 py-3 border-2 border-gray-300">
+                  Games Played
+                </th>
+                <th className="px-6 py-3 border-2 border-gray-300">Wins</th>
+                <th className="px-6 py-3 border-2 border-gray-300">Losses</th>
+                <th className="px-6 py-3 border-2 border-gray-300">
+                  Highest Win
                 </th>
                 <th scope="col" className="px-6 py-3 border-2 border-gray-300">
                   Action
@@ -356,6 +367,9 @@ const User = () => {
                     {item?.createdAt?.split("T")[0]}
                   </td>
                   <td className="px-6 py-4 border-2 border-gray-300">
+                    {item?.bio ? item.bio : "No bio details"}
+                  </td>
+                  <td className="px-6 py-4 border-2 border-gray-300">
                     {item?.avatar ? (
                       <img
                         src={item.avatar.url}
@@ -365,6 +379,18 @@ const User = () => {
                     ) : (
                       <span className="text-gray-500">No Avatar</span>
                     )}
+                  </td>
+                  <td className="px-6 py-4 border-2 border-gray-300">
+                    {item?.gamesPlayed ?? 0}
+                  </td>
+                  <td className="px-6 py-4 border-2 border-gray-300">
+                    {item?.wins ?? 0}
+                  </td>
+                  <td className="px-6 py-4 border-2 border-gray-300">
+                    {item?.losses ?? 0}
+                  </td>
+                  <td className="px-6 py-4 border-2 border-gray-300">
+                    {item?.highestWin ?? 0}
                   </td>
 
                   <td className=" py-5 pl-5 gap-1 border-2  border-gray-300">

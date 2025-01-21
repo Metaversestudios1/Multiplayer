@@ -63,12 +63,10 @@ const UserSchema = new mongoose.Schema(
       mimetype: { type: String },
     },
     bio: { type: String, maxlength: 500 },
-    stats: {
-      gamesPlayed: { type: Number, default: 0 },
-      wins: { type: Number, default: 0 },
-      losses: { type: Number, default: 0 },
-      highestWin: { type: Number, default: 0 },
-    },
+    gamesPlayed: { type: Number, default: 0 },
+    wins: { type: Number, default: 0 },
+    losses: { type: Number, default: 0 },
+    highestWin: { type: Number, default: 0 },
   },
   { timestamps: true, collection: "user" }
 );

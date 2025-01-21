@@ -22,6 +22,10 @@ const EditUser = () => {
     promocode: "",
     balance: "",
     bonus: "",
+    gamesPlayed: "",
+    wins: "",
+    losses: "",
+    highestWin: "",
   };
 
   const [oldData, setOldData] = useState(initialState);
@@ -51,6 +55,10 @@ const EditUser = () => {
         balance: response.result.balance,
         bonus: response.result.bonus,
         bio: response.result.bio,
+        gamesPlayed: response.result.gamesPlayed,
+        wins: response.result.wins,
+        losses: response.result.losses,
+        highestWin: response.result.highestWin,
       });
     }
   };
@@ -140,6 +148,10 @@ const EditUser = () => {
       formData.append("balance", oldData.balance);
       formData.append("bonus", oldData.bonus);
       formData.append("bio", oldData.bio);
+      formData.append("gamesPlayed", oldData.gamesPlayed);
+      formData.append("wins", oldData.wins);
+      formData.append("losses", oldData.losses);
+      formData.append("highestWin", oldData.highestWin);
       if (avatar) {
         formData.append("avatar", avatar);
       }
@@ -363,6 +375,78 @@ const EditUser = () => {
                 accept="image/*"
                 onChange={handleChange}
                 className="bg-gray-200 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-black block w-full p-2.5"
+              />
+            </div>
+
+            <div className=" my-2">
+              <label
+                htmlFor="gamesPlayed"
+                className="block mb-2 text-lg font-medium text-gray-900 dark:text-black"
+              >
+                Games Played
+              </label>
+              <input
+                name="gamesPlayed"
+                value={oldData.gamesPlayed}
+                onChange={handleChange}
+                type="number"
+                id="gamesPlayed"
+                className="bg-gray-200 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-black block w-full p-2.5 "
+                placeholder="Please enter game played"
+              />
+            </div>
+
+            <div className=" my-2">
+              <label
+                htmlFor="wins"
+                className="block mb-2 text-lg font-medium text-gray-900 dark:text-black"
+              >
+                Wins
+              </label>
+              <input
+                name="wins"
+                value={oldData.wins}
+                onChange={handleChange}
+                type="number"
+                id="wins"
+                className="bg-gray-200 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-black block w-full p-2.5 "
+                placeholder="Please enter wins"
+              />
+            </div>
+
+            <div className=" my-2">
+              <label
+                htmlFor="losses"
+                className="block mb-2 text-lg font-medium text-gray-900 dark:text-black"
+              >
+                Losses
+              </label>
+              <input
+                name="losses"
+                value={oldData.losses}
+                onChange={handleChange}
+                type="number"
+                id="losses"
+                className="bg-gray-200 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-black block w-full p-2.5 "
+                placeholder="Please enter losses"
+              />
+            </div>
+
+            <div className=" my-2">
+              <label
+                htmlFor="highestWin"
+                className="block mb-2 text-lg font-medium text-gray-900 dark:text-black"
+              >
+                HighestWin
+              </label>
+              <input
+                name="highestWin"
+                value={oldData.highestWin}
+                onChange={handleChange}
+                type="number"
+                id="highestWin"
+                className="bg-gray-200 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-black block w-full p-2.5 "
+                placeholder="Please enter highestWin"
               />
             </div>
 
