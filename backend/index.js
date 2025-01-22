@@ -29,6 +29,7 @@ const Notification = require("./Routes/NotificationRoute");
 const Game = require("./Routes/Games/GamesRoute");
 const GameData = require("./Routes/Games/GamesDataRoute");
 const LudoHistory = require("./Routes/Games/LudoHistoryRoute");
+const FriendRoute = require("./Routes/FriendRoute");
 
 // Connect to the database
 connectDB();
@@ -100,6 +101,7 @@ app.use("/api", Notification);
 app.use("/api", Game);
 app.use("/api", GameData);
 app.use("/api", LudoHistory);
+app.use("/api", FriendRoute);
 
 // Root route
 app.get("/", (req, res) => {

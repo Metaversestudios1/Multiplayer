@@ -54,6 +54,8 @@ import LoginUser from "./components/User/LoginUser";
 import UserHome from "./components/User/UserHome";
 import UserNavbar from "./components/User/UserNavbar";
 import UserSidebar from "./components/User/UserSidebar";
+import FriendRequest from "./components/User/FriendRequest";
+import AddFriendRequest from "./components/User/AddFriendRequest";
 
 function App() {
   const [sideBar, setSideBar] = useState(true);
@@ -785,32 +787,63 @@ function App() {
       path: "/loginuser",
       element: (
         <div className="flex h-screen">
-          {/* <Sidebar
-            sidebar={sideBar}
-            className="flex-1"
-            toggleSideBar={toggleSideBar}
-          />
-          <div className="flex flex-col flex-grow overflow-y-auto flex-[3]">
-            <Navbar toggleSideBar={toggleSideBar} /> */}
           <LoginUser />
-          {/* </div> */}
         </div>
       ),
     },
     {
       path: "/userdashboard",
       element: (
-        <div className="flex h-screen">
-          <UserSidebar
-            sidebar={sideBar}
-            className="flex-1"
-            toggleSideBar={toggleSideBar}
-          />
-          <div className="flex flex-col flex-grow overflow-y-auto flex-[3]">
-            <UserNavbar toggleSideBar={toggleSideBar} />
-            <UserHome />
+        <UserProtectedRoute>
+          <div className="flex h-screen">
+            <UserSidebar
+              sidebar={sideBar}
+              className="flex-1"
+              toggleSideBar={toggleSideBar}
+            />
+            <div className="flex flex-col flex-grow overflow-y-auto flex-[3]">
+              <UserNavbar toggleSideBar={toggleSideBar} />
+              <UserHome />
+            </div>
           </div>
-        </div>
+        </UserProtectedRoute>
+      ),
+    },
+    {
+      path: "/friendrequest",
+      element: (
+        <UserProtectedRoute>
+          <div className="flex h-screen">
+            <UserSidebar
+              sidebar={sideBar}
+              className="flex-1"
+              toggleSideBar={toggleSideBar}
+            />
+            <div className="flex flex-col flex-grow overflow-y-auto flex-[3]">
+              <UserNavbar toggleSideBar={toggleSideBar} />
+              <FriendRequest />
+            </div>
+          </div>
+        </UserProtectedRoute>
+      ),
+    },
+
+    {
+      path: "/addfriendrequest",
+      element: (
+        <UserProtectedRoute>
+          <div className="flex h-screen">
+            <UserSidebar
+              sidebar={sideBar}
+              className="flex-1"
+              toggleSideBar={toggleSideBar}
+            />
+            <div className="flex flex-col flex-grow overflow-y-auto flex-[3]">
+              <UserNavbar toggleSideBar={toggleSideBar} />
+              <AddFriendRequest />
+            </div>
+          </div>
+        </UserProtectedRoute>
       ),
     },
 
