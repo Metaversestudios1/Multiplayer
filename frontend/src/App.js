@@ -26,6 +26,9 @@ import Bankdetailskyc from "./components/KYCUser/bankdetailskyc";
 import Withdrawdashboard from "./components/withdraw/withdrawdashboard";
 import Aviatorhistory from "./components/Aviator/aviatorhistory";
 
+import UserAuthProvider from "./context/UserAuthContext";
+import UserProtectedRoute from "./components/utils/UserProtectedRoute";
+
 //new component added
 import AddUser from "./components/User/AddUser";
 import EditUser from "./components/User/EditUser";
@@ -47,6 +50,8 @@ import LudoHistory from "./components/Games/LudoHistory";
 import AddLudoHistory from "./components/Games/AddLudoHistory";
 import AddRechargeHistory from "./components/setting/AddRechargeHistory";
 import AddWithdrawHistory from "./components/setting/AddWithdrawHistory";
+import LoginUser from "./components/User/LoginUser";
+import UserHome from "./components/User/UserHome";
 
 function App() {
   const [sideBar, setSideBar] = useState(true);
@@ -122,14 +127,7 @@ function App() {
       path: "/aviatornew",
       element: <AviatorNew />,
     },
-    // {
-    //   path: "/loginuser",
-    //   element: <LoginUser />,
-    // },
-    // {
-    //   path: "/logoutuser",
-    //   element: <LogoutUser />,
-    // },
+
     {
       path: "/bankdetails",
       element: (
@@ -782,6 +780,39 @@ function App() {
     },
 
     {
+      path: "/loginuser",
+      element: (
+        <div className="flex h-screen">
+          {/* <Sidebar
+            sidebar={sideBar}
+            className="flex-1"
+            toggleSideBar={toggleSideBar}
+          />
+          <div className="flex flex-col flex-grow overflow-y-auto flex-[3]">
+            <Navbar toggleSideBar={toggleSideBar} /> */}
+          <LoginUser />
+          {/* </div> */}
+        </div>
+      ),
+    },
+    {
+      path: "/userdashboard",
+      element: (
+        <div className="flex h-screen">
+          {/* <Sidebar
+            sidebar={sideBar}
+            className="flex-1"
+            toggleSideBar={toggleSideBar}
+          />
+          <div className="flex flex-col flex-grow overflow-y-auto flex-[3]">
+            <Navbar toggleSideBar={toggleSideBar} /> */}
+          <UserHome />
+          {/* </div> */}
+        </div>
+      ),
+    },
+
+    {
       path: "*",
       element: <Error />,
     },
@@ -789,7 +820,9 @@ function App() {
 
   return (
     <AuthProvider>
-      <RouterProvider router={router} />
+      <UserAuthProvider>
+        <RouterProvider router={router} />
+      </UserAuthProvider>
     </AuthProvider>
   );
 }

@@ -56,7 +56,7 @@ router.get("/getsumofbonus", getSumOfBonus);
 router.put("/changeuserstatus/:userId", changeUserStatus);
 router.put("/addwalletuser", addWalletUser);
 router.put("/removewalletuser", removeWalletUser);
-// router.post("/loginuser", loginUser);
-// router.post("/logoutuser", logoutUser);
+router.post("/loginuser", loginUser);
+router.post("/logoutuser", logoutUser);
 
 module.exports = router;
