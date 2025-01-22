@@ -5,15 +5,16 @@ import Cookies from "js-cookie";
 import { ToastContainer, toast } from "react-toastify";
 import { CgLogOut } from "react-icons/cg";
 import { PiLineVerticalThin } from "react-icons/pi";
-import { AuthContext } from "../context/AuthContext";
+import { UserAuthContext } from "../../context/UserAuthContext";
+
 const UserNavbar = ({ toggleSideBar }) => {
-  const { setAuth } = useContext(AuthContext);
+  const { userAuth, setUserAuth } = useContext(UserAuthContext);
   const navigate = useNavigate();
   const handleLogout = async () => {
     try {
       // Perform logout logic (e.g., API call to logout)
       const res = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/logout`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/logoutuser`,
         {
           method: "POST",
           credentials: "include", // Send cookies with the request
@@ -21,7 +22,7 @@ const UserNavbar = ({ toggleSideBar }) => {
       );
       const response = await res.json();
       if (response.status) {
-        Cookies.remove("jwt");
+        Cookies.remove("jwt_user");
         toast.success("Logout Successfully", {
           position: "top-right",
           autoClose: 1000,
@@ -32,10 +33,8 @@ const UserNavbar = ({ toggleSideBar }) => {
           progress: undefined,
           theme: "light",
         });
-        setAuth({ isAuthenticated: false, user: null });
-        setTimeout(() => {
-          navigate("/login");
-        }, 1500);
+        setUserAuth({ isAuthenticated: false, user: null });
+        navigate("/loginuser");
       }
     } catch (error) {
       console.error("Logout failed:", error);

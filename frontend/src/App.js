@@ -52,6 +52,8 @@ import AddRechargeHistory from "./components/setting/AddRechargeHistory";
 import AddWithdrawHistory from "./components/setting/AddWithdrawHistory";
 import LoginUser from "./components/User/LoginUser";
 import UserHome from "./components/User/UserHome";
+import UserNavbar from "./components/User/UserNavbar";
+import UserSidebar from "./components/User/UserSidebar";
 
 function App() {
   const [sideBar, setSideBar] = useState(true);
@@ -799,15 +801,15 @@ function App() {
       path: "/userdashboard",
       element: (
         <div className="flex h-screen">
-          {/* <Sidebar
+          <UserSidebar
             sidebar={sideBar}
             className="flex-1"
             toggleSideBar={toggleSideBar}
           />
           <div className="flex flex-col flex-grow overflow-y-auto flex-[3]">
-            <Navbar toggleSideBar={toggleSideBar} /> */}
-          <UserHome />
-          {/* </div> */}
+            <UserNavbar toggleSideBar={toggleSideBar} />
+            <UserHome />
+          </div>
         </div>
       ),
     },
